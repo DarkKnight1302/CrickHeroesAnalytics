@@ -7,5 +7,7 @@ namespace CricHeroesAnalytics.Repositories
         public Task CreateOrUpdatePlayer(Player player);
 
         public Task<Player> GetPlayer(string playerId);
+
+        public List<Player> GetAllPlayers();
     }
 }

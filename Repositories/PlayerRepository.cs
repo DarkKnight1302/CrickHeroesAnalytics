@@ -1,6 +1,8 @@
 ﻿using CricHeroesAnalytics.Entities;
 using CricHeroesAnalytics.Services.Interfaces;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
+using System;
 
 namespace CricHeroesAnalytics.Repositories
 {
@@ -18,6 +20,19 @@ namespace CricHeroesAnalytics.Repositories
         {
             var container = FetchContainer();
             await container.UpsertItemAsync<Player>(player, new PartitionKey(player.Id));
+        }
+
+        public List<Player> GetAllPlayers()
+        {
+            List<Player> players = new List<Player>();
+            var container = FetchContainer();
+            var q = container.GetItemLinqQueryable<Player>(true);
+            var enumerator = q.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                players.Add(enumerator.Current);
+            }
+            return players;
         }
 
         public async Task<Player> GetPlayer(string playerId)

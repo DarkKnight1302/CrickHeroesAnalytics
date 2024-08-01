@@ -1,7 +1,9 @@
 using CricHeroesAnalytics.Components;
+using CricHeroesAnalytics.CronJob;
 using CricHeroesAnalytics.Repositories;
 using CricHeroesAnalytics.Services;
 using CricHeroesAnalytics.Services.Interfaces;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +18,19 @@ builder.Services.AddSingleton<ISecretService, SecretService>();
 builder.Services.AddSingleton<IPlayerAnalyticsService, PlayerAnalyticsService>();
 builder.Services.AddSingleton<IMatchRepository, MatchRepository>();
 builder.Services.AddSingleton<IPlayerRepository, PlayerRepository>();
+builder.Services.AddQuartz(q =>
+{
+    var jobKey = new JobKey("ScoreUpdateJob");
 
+    q.AddJob<ScoreUpdateJob>(opts => opts.WithIdentity(jobKey));
+
+    q.AddTrigger(opts => opts
+                        .ForJob(jobKey)
+                        .WithIdentity("MyJob-trigger")
+                        .WithCronSchedule("0 0 */12 * * ?"));
+});
+
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 builder.Services.AddMemoryCache();
 
 var app = builder.Build();

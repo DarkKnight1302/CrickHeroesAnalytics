@@ -104,5 +104,10 @@ namespace CricHeroesAnalytics.Services
                 await this._playerRepository.CreateOrUpdatePlayer(player);
             }
         }
+
+        public List<Entities.Player> GetAllPlayers()
+        {
+            return this._playerRepository.GetAllPlayers();
+        }
     }
 }
