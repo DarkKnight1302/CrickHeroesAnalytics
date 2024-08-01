@@ -369,5 +369,5 @@ FodyWeavers.xsd
 /bin/Debug/net8.0/CricHeroesAnalytics.dll
 /bin/Debug/net8.0/CricHeroesAnalytics.exe
 /bin/Debug/net8.0/CricHeroesAnalytics.pdb
-/bin/Debug/net8.0/CricHeroesAnalytics.runtimeconfig.json
-/obj/project.nuget.cache
+bin/
+obj/
