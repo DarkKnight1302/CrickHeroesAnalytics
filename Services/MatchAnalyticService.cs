@@ -1,14 +1,14 @@
-﻿
-using CricHeroesAnalytics.Models;
+﻿using CricHeroesAnalytics.Models;
+using CricHeroesAnalytics.Services.Interfaces;
 
-namespace CricHeroesAnalytics.Services.Interfaces
+namespace CricHeroesAnalytics.Services
 {
     public class MatchAnalyticService : IMatchAnalyticService
     {
         private readonly ILogger _logger;
         private readonly ICricHeroesApiClient cricHeroesApiClient;
 
-        public MatchAnalyticService(ILogger<IMatchAnalyticService> logger, ICricHeroesApiClient cricHeroesApiClient) 
+        public MatchAnalyticService(ILogger<IMatchAnalyticService> logger, ICricHeroesApiClient cricHeroesApiClient)
         {
             _logger = logger;
             this.cricHeroesApiClient = cricHeroesApiClient;
@@ -16,7 +16,7 @@ namespace CricHeroesAnalytics.Services.Interfaces
 
         public async Task UpdateLatestMatchData()
         {
-            List<MatchData> matchData = await this.cricHeroesApiClient.GetMatches();
+            List<MatchData> matchData = await cricHeroesApiClient.GetMatches();
             if (matchData == null)
             {
                 _logger.LogInformation("No matches found");
@@ -25,13 +25,13 @@ namespace CricHeroesAnalytics.Services.Interfaces
             matchData = FilterValidMatches(matchData);
             matchData.Sort(Compare);
             // Check in db.
-            await this.cricHeroesApiClient.GetScoreCard(matchData[0]);
+            await cricHeroesApiClient.GetScoreCard(matchData[0]);
         }
 
-        private List<MatchData> FilterValidMatches(List<MatchData> matchData) 
+        private List<MatchData> FilterValidMatches(List<MatchData> matchData)
         {
             List<MatchData> validMatches = new List<MatchData>();
-            foreach(var match in  matchData)
+            foreach (var match in matchData)
             {
                 if (match.MatchResult.Equals("Resulted") && match.Status.Equals("past"))
                 {
@@ -41,7 +41,7 @@ namespace CricHeroesAnalytics.Services.Interfaces
             return validMatches;
         }
 
-        public int Compare(MatchData a, MatchData b) 
+        public int Compare(MatchData a, MatchData b)
         {
             return b.MatchStartTime.CompareTo(a.MatchStartTime);
         }
