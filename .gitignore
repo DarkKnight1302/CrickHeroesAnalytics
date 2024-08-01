@@ -364,3 +364,10 @@ FodyWeavers.xsd
 /Properties/launchSettings.json
 /Properties/serviceDependencies.json
 /Properties/serviceDependencies.local.json
+/.vs/CricHeroesAnalytics/DesignTimeBuild/.dtbcache.v2
+/bin/Debug/net8.0/CricHeroesAnalytics.deps.json
+/bin/Debug/net8.0/CricHeroesAnalytics.dll
+/bin/Debug/net8.0/CricHeroesAnalytics.exe
+/bin/Debug/net8.0/CricHeroesAnalytics.pdb
+/bin/Debug/net8.0/CricHeroesAnalytics.runtimeconfig.json
+/obj/project.nuget.cache
