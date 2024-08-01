@@ -1,7 +1,7 @@
 ﻿@page "/counter"
 @using CricHeroesAnalytics.Services.Interfaces
 @rendermode InteractiveServer
-@inject ICricHeroesApiClient cricHeroesClient;
+@inject IMatchAnalyticService matchAnalyticsService;
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
@@ -16,6 +16,6 @@
     private void IncrementCount()
     {
         currentCount++;
-        cricHeroesClient.GetMatches();
+        matchAnalyticsService.UpdateLatestMatchData();
     }
 }

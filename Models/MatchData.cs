@@ -5,7 +5,7 @@ namespace CricHeroesAnalytics.Models
     public class MatchData
     {
         [JsonProperty("match_id")]
-        public int MatchId { get; set; }
+        public long MatchId { get; set; }
 
         [JsonProperty("match_type")]
         public string MatchType { get; set; }

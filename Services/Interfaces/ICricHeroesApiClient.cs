@@ -1,9 +1,11 @@
-﻿namespace CricHeroesAnalytics.Services.Interfaces
+﻿using CricHeroesAnalytics.Models;
+
+namespace CricHeroesAnalytics.Services.Interfaces
 {
     public interface ICricHeroesApiClient
     {
-        public Task GetMatches();
+        public Task<List<MatchData>> GetMatches();
 
-        public Task GetScoreCard();
+        public Task<object> GetScoreCard(MatchData matchData);
     }
 }

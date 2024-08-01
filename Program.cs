@@ -9,6 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<ICricHeroesApiClient, CricHeroesApiClient>();
+builder.Services.AddSingleton<IMatchAnalyticService, MatchAnalyticService>();
 
 var app = builder.Build();
 
