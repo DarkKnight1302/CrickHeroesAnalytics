@@ -1,4 +1,5 @@
 ﻿using CricHeroesAnalytics.Models;
+using CricHeroesAnalytics.Models.ScoreCardModels;
 
 namespace CricHeroesAnalytics.Services.Interfaces
 {
@@ -6,6 +7,6 @@ namespace CricHeroesAnalytics.Services.Interfaces
     {
         public Task<List<MatchData>> GetMatches();
 
-        public Task<object> GetScoreCard(MatchData matchData);
+        public Task<ScoreCardResponse> GetScoreCard(MatchData matchData);
     }
 }

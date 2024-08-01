@@ -57,37 +57,44 @@ namespace CricHeroesAnalytics.Services
             }
         }
 
-        public async Task<object> GetScoreCard(MatchData matchData)
+        public async Task<ScoreCardResponse> GetScoreCard(MatchData matchData)
         {
-            if (matchData == null)
+            try
             {
-                return null;
-            }
-            string combinedTeamName = GenerateTeamName(matchData.TeamA, matchData.TeamB);
-            long matchId = matchData.MatchId;
-            using (HttpClient client = new HttpClient())
+                if (matchData == null)
+                {
+                    return null;
+                }
+                string combinedTeamName = GenerateTeamName(matchData.TeamA, matchData.TeamB);
+                long matchId = matchData.MatchId;
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                    client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("en-US"));
+                    client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("en", 0.9));
+                    client.DefaultRequestHeaders.Add("priority", "u=1, i");
+                    client.DefaultRequestHeaders.Referrer = new Uri($"https://cricheroes.com/scorecard/{matchId}/individual/{combinedTeamName}/summary");
+                    client.DefaultRequestHeaders.Add("sec-ch-ua", "\"Not)A;Brand\";v=\"99\", \"Microsoft Edge\";v=\"127\", \"Chromium\";v=\"127\"");
+                    client.DefaultRequestHeaders.Add("sec-ch-ua-mobile", "?0");
+                    client.DefaultRequestHeaders.Add("sec-ch-ua-platform", "\"Windows\"");
+                    client.DefaultRequestHeaders.Add("sec-fetch-dest", "empty");
+                    client.DefaultRequestHeaders.Add("sec-fetch-mode", "cors");
+                    client.DefaultRequestHeaders.Add("sec-fetch-site", "same-origin");
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0");
+                    client.DefaultRequestHeaders.Add("x-nextjs-data", "1");
+
+                    HttpResponseMessage response = await client.GetAsync($"https://cricheroes.com/_next/data/{this.buildId}/scorecard/{matchId}/individual/{combinedTeamName}/scorecard.json");
+                    response.EnsureSuccessStatusCode();
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    this.logger.LogInformation(JsonUtil.SerializeObject(responseBody));
+                    ScoreCardResponse scoreCardResponse = JsonUtil.DeSerialize<ScoreCardResponse>(responseBody);
+                    this.logger.LogInformation(JsonUtil.SerializeObject(scoreCardResponse));
+                    return scoreCardResponse;
+                }
+            } catch (Exception ex)
             {
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("en-US"));
-                client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("en", 0.9));
-                client.DefaultRequestHeaders.Add("priority", "u=1, i");
-                client.DefaultRequestHeaders.Referrer = new Uri($"https://cricheroes.com/scorecard/{matchId}/individual/{combinedTeamName}/summary");
-                client.DefaultRequestHeaders.Add("sec-ch-ua", "\"Not)A;Brand\";v=\"99\", \"Microsoft Edge\";v=\"127\", \"Chromium\";v=\"127\"");
-                client.DefaultRequestHeaders.Add("sec-ch-ua-mobile", "?0");
-                client.DefaultRequestHeaders.Add("sec-ch-ua-platform", "\"Windows\"");
-                client.DefaultRequestHeaders.Add("sec-fetch-dest", "empty");
-                client.DefaultRequestHeaders.Add("sec-fetch-mode", "cors");
-                client.DefaultRequestHeaders.Add("sec-fetch-site", "same-origin");
-                client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0");
-                client.DefaultRequestHeaders.Add("x-nextjs-data", "1");
-
-                HttpResponseMessage response = await client.GetAsync($"https://cricheroes.com/_next/data/{this.buildId}/scorecard/{matchId}/individual/{combinedTeamName}/scorecard.json");
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
-                this.logger.LogInformation(JsonUtil.SerializeObject(responseBody));
-                ScoreCardResponse scoreCardResponse = JsonUtil.DeSerialize<ScoreCardResponse>(responseBody);
-                this.logger.LogInformation(JsonUtil.SerializeObject(scoreCardResponse));
+                this.logger.LogError($"{ex.Message} \n {ex.StackTrace}");
                 return null;
             }
         }

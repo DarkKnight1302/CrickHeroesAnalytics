@@ -7,15 +7,17 @@ namespace CricHeroesAnalytics.Repositories
     public class MatchRepository : IMatchRepository
     {
         private readonly ICosmosDbService cosmosDbService;
+        private readonly ILogger<MatchRepository> logger;
 
-        public MatchRepository(ICosmosDbService cosmosDbService)
+        public MatchRepository(ICosmosDbService cosmosDbService, ILogger<MatchRepository> logger)
         {
             this.cosmosDbService = cosmosDbService;
+            this.logger = logger;
         }
         public async Task AddMatch(Match match)
         {
             var container = FetchContainer();
-            await container.CreateItemAsync<Match>(match, new PartitionKey(match.Id)).ConfigureAwait(false);
+            await container.UpsertItemAsync<Match>(match, new PartitionKey(match.Id)).ConfigureAwait(false);
         }
 
         public async Task<bool> IsMatchAlreadyUpdated(string matchId)
@@ -31,6 +33,7 @@ namespace CricHeroesAnalytics.Repositories
             }
             catch (CosmosException)
             {
+                this.logger.LogInformation($"Match Doesn't exist {matchId}");
                 return false;
             }
             return false;

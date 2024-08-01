@@ -1,4 +1,5 @@
 using CricHeroesAnalytics.Components;
+using CricHeroesAnalytics.Repositories;
 using CricHeroesAnalytics.Services;
 using CricHeroesAnalytics.Services.Interfaces;
 
@@ -10,6 +11,12 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddSingleton<ICricHeroesApiClient, CricHeroesApiClient>();
 builder.Services.AddSingleton<IMatchAnalyticService, MatchAnalyticService>();
+builder.Services.AddSingleton<ICosmosDbService, CosmosDbService>();
+builder.Services.AddSingleton<ISecretService, SecretService>();
+builder.Services.AddSingleton<IPlayerAnalyticsService, PlayerAnalyticsService>();
+builder.Services.AddSingleton<IMatchRepository, MatchRepository>();
+builder.Services.AddSingleton<IPlayerRepository, PlayerRepository>();
+
 builder.Services.AddMemoryCache();
 
 var app = builder.Build();
