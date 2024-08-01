@@ -1,6 +1,7 @@
 ﻿@page "/counter"
+@using CricHeroesAnalytics.Services.Interfaces
 @rendermode InteractiveServer
-
+@inject ICricHeroesApiClient cricHeroesClient;
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
@@ -15,5 +16,6 @@
     private void IncrementCount()
     {
         currentCount++;
+        cricHeroesClient.GetMatches();
     }
 }
