@@ -141,7 +141,7 @@
 
             .leaderboards-container {
                 display: flex;
-                justify-content: space-between;
+                flex-direction: column;
                 width: 100%;
                 max-width: 1200px;
                 background-color: white;
@@ -151,10 +151,23 @@
                 box-sizing: border-box;
             }
 
+            @@media (min-width: 768px) {
+                .leaderboards-container {
+                    flex-direction: row;
+                    justify-content: space-between;
+                }
+            }
+
             .leaderboard-section {
                 flex: 1;
-                margin: 0 15px;
+                margin: 0 0 15px 0;
                 text-align: center;
+            }
+
+            @@media (min-width: 768px) {
+                .leaderboard-section {
+                    margin: 0 15px;
+                }
             }
 
                 .leaderboard-section h2 {
@@ -197,6 +210,23 @@
 
             .purple-cap {
                 background-color: #6f42c1;
+            }
+
+            @@media (max-width: 767px) {
+                .sidebar {
+                    width: 100%;
+                    padding: 10px;
+                }
+
+                .header h1 {
+                    flex-direction: column;
+                    font-size: 1.5em;
+                }
+
+                .logo {
+                    margin-right: 0;
+                    margin-bottom: 10px;
+                }
             }
         </style>
 
