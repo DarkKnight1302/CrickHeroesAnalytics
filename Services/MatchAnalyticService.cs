@@ -75,7 +75,7 @@ namespace CricHeroesAnalytics.Services
             List<MatchData> validMatches = new List<MatchData>();
             foreach (var match in matchData)
             {
-                if (match.MatchResult.Equals("Resulted") && match.Status.Equals("past") && match.MatchStartTime > DateTime.Now.AddMonths(-1))
+                if (match.MatchResult.Equals("Resulted") && match.Status.Equals("past") && match.MatchStartTime > DateTime.Now.AddDays(-2))
                 {
                     validMatches.Add(match);
                 }
