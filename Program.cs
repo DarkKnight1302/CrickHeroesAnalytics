@@ -18,6 +18,7 @@ builder.Services.AddSingleton<ISecretService, SecretService>();
 builder.Services.AddSingleton<IPlayerAnalyticsService, PlayerAnalyticsService>();
 builder.Services.AddSingleton<IMatchRepository, MatchRepository>();
 builder.Services.AddSingleton<IPlayerRepository, PlayerRepository>();
+builder.Services.AddSingleton<IJobExecutionRepository, JobExecutionRespository>();
 builder.Services.AddQuartz(q =>
 {
     var jobKey = new JobKey("ScoreUpdateJob");

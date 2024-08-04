@@ -48,7 +48,7 @@ namespace CricHeroesAnalytics.Services
                     break;
                 }
                 ScoreCardResponse scoreCardResponse = await cricHeroesApiClient.GetScoreCard(data);
-                if (scoreCardResponse == null)
+                if (scoreCardResponse == null || scoreCardResponse.PageProps.Scorecard[0].Batting.Count == 0)
                 {
                     _logger.LogInformation($"ScoreCard Not Found {matchIdString}");
                     break;
