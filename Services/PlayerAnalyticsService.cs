@@ -1,5 +1,4 @@
 ﻿using CricHeroesAnalytics.Entities;
-using CricHeroesAnalytics.Models;
 using CricHeroesAnalytics.Models.ScoreCardModels;
 using CricHeroesAnalytics.Repositories;
 using CricHeroesAnalytics.Services.Interfaces;
@@ -52,6 +51,7 @@ namespace CricHeroesAnalytics.Services
                 PlayerRunsPerMatch playerRunsPerMatch = new PlayerRunsPerMatch();
                 playerRunsPerMatch.MatchId = matchId;
                 playerRunsPerMatch.Runs = battingStats.Runs;
+                playerRunsPerMatch.BallsPlayed = battingStats.Balls;
                 player.PlayerRunMatchMap[matchId] = playerRunsPerMatch;
                 UpdateTotalRuns(player);
                 await this._playerRepository.CreateOrUpdatePlayer(player);
@@ -61,11 +61,18 @@ namespace CricHeroesAnalytics.Services
         private void UpdateTotalRuns(Entities.Player player)
         {
             int totalRuns = 0;
+            int totalBalls = 0;
             foreach(var kv in player.PlayerRunMatchMap)
             {
                 totalRuns += kv.Value.Runs;
+                totalBalls += kv.Value.BallsPlayed;
             }
             player.TotalRuns = totalRuns;
+            player.BallsPlayed = totalBalls;
+            if (totalBalls > 0)
+            {
+                player.StrikeRate = (totalRuns * 100) / totalBalls;
+            }
             player.MatchesPlayed = player.PlayerRunMatchMap.Count;
         }
 
