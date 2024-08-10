@@ -1,7 +1,11 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 @using CricHeroesAnalytics.Services.Interfaces
+@using CricHeroesAnalytics.Components.Layout
 @inject IPlayerAnalyticsService playerService
 @inject IMatchAnalyticService matchService;
+@inherits LayoutComponentBase;
+@layout MainLayout;
 
 <main>
     <div class="header">
@@ -78,7 +82,9 @@
             </table>
         </div>
     </div>
-
+    <div style="text-align: center; margin-top: 20px;">
+        <button @onclick="Refresh" class="btn btn-primary">Refresh Leaderboard</button>
+    </div>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -229,8 +235,9 @@
 
 </main>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+@code {
+    void Refresh()
+    {
+        _ = matchService.UpdateLatestMatchData();
+    }
+}
