@@ -1,0 +1,243 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using CricHeroesAnalytics.Services.Interfaces
+@using CricHeroesAnalytics.Components.Layout
+@inject IPlayerAnalyticsService playerService
+@inject IMatchAnalyticService matchService;
+@inherits LayoutComponentBase;
+@layout MainLayout;
+
+<main>
+    <div class="header">
+        <h1>
+            <img src="https://newhorizonblobstorage.blob.core.windows.net/cricheroesanalytics/Designer-5.png" alt="Logo" class="logo" />
+            Cult 100 Leaderboard
+        </h1>
+    </div>
+
+    @{
+        var players = playerService.GetAllPlayers();
+        var topRunScorer = players.OrderByDescending(p => p.TotalRuns).FirstOrDefault();
+        var topWicketTaker = players.OrderByDescending(p => p.TotalWickets).FirstOrDefault();
+    }
+
+    <div class="leaderboards-container">
+        <div class="leaderboard-section">
+            <h2>Runs Scored</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Innings</th>
+                        <th>Runs</th>
+                        <th>Strike Rate</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var player in players.OrderByDescending(p => p.TotalRuns))
+                    {
+                        <tr>
+                            <td>@player.Name</td>
+                            <td>@player.MatchesPlayed</td>
+                            <td>@player.TotalRuns</td>
+                            <td>@player.StrikeRate</td>
+                            <td>
+                                @if (player == topRunScorer)
+                                {
+                                    <span class="orange-cap">Orange Cap</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="leaderboard-section">
+            <h2>Wickets Taken</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Wickets</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var player in players.OrderByDescending(p => p.TotalWickets))
+                    {
+                        <tr>
+                            <td>@player.Name</td>
+                            <td>@player.TotalWickets</td>
+                            <td>
+                                @if (player == topWicketTaker)
+                                {
+                                    <span class="purple-cap">Purple Cap</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <button @onclick="Refresh" class="btn btn-primary">Refresh Leaderboard</button>
+    </div>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        .page {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            padding: 20px;
+        }
+
+            .sidebar a {
+                color: white;
+                text-decoration: none;
+                display: block;
+                margin-bottom: 10px;
+                font-weight: bold;
+            }
+
+        .header {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+            .header h1 {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2em;
+                color: #343a40;
+                margin: 0;
+            }
+
+        .logo {
+            width: 80px; /* Adjust size as needed */
+            height: auto;
+            margin-right: 15px;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .leaderboards-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1300px;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        @@media (min-width: 768px) {
+            .leaderboards-container {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        .leaderboard-section {
+            flex: 1;
+            margin: 0 0 15px 0;
+            text-align: center;
+        }
+
+        @@media (min-width: 768px) {
+            .leaderboard-section {
+                margin: 0 15px;
+            }
+        }
+
+        .leaderboard-section h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #495057;
+        }
+
+        .leaderboard-section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .leaderboard-section th, .leaderboard-section td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .leaderboard-section th {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        .leaderboard-section tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .orange-cap, .purple-cap {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .orange-cap {
+            background-color: #ffa500;
+        }
+
+        .purple-cap {
+            background-color: #6f42c1;
+        }
+
+        @@media (max-width: 767px) {
+            .sidebar {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .header h1 {
+                flex-direction: column;
+                font-size: 1.5em;
+            }
+
+            .logo {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+
+</main>
+
+@code {
+    void Refresh()
+    {
+        _ = matchService.UpdateLatestMatchData();
+    }
+}
