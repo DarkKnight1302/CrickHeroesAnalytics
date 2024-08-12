@@ -31,23 +31,22 @@
                         <th>Innings</th>
                         <th>Runs</th>
                         <th>Strike Rate</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var player in players.OrderByDescending(p => p.TotalRuns))
                     {
                         <tr>
-                            <td>@player.Name</td>
+                            <td>
+                                @player.Name &nbsp;
+                                @if (player == topRunScorer)
+                                {
+                                    <img src="https://newhorizonblobstorage.blob.core.windows.net/cricheroesanalytics/OrangeCap.jpeg" alt="Orange Cap" class="cap-icon" />
+                                }
+                            </td>
                             <td>@player.MatchesPlayed</td>
                             <td>@player.TotalRuns</td>
                             <td>@player.StrikeRate</td>
-                            <td>
-                                @if (player == topRunScorer)
-                                {
-                                    <span class="orange-cap">Orange Cap</span>
-                                }
-                            </td>
                         </tr>
                     }
                 </tbody>
@@ -61,21 +60,20 @@
                     <tr>
                         <th>Player</th>
                         <th>Wickets</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var player in players.OrderByDescending(p => p.TotalWickets))
                     {
                         <tr>
-                            <td>@player.Name</td>
-                            <td>@player.TotalWickets</td>
                             <td>
+                                @player.Name &nbsp;
                                 @if (player == topWicketTaker)
                                 {
-                                    <span class="purple-cap">Purple Cap</span>
+                                    <img src="https://newhorizonblobstorage.blob.core.windows.net/cricheroesanalytics/PurpleCap.jpeg" alt="Purple Cap" class="cap-icon" />
                                 }
                             </td>
+                            <td>@player.TotalWickets</td>
                         </tr>
                     }
                 </tbody>
@@ -146,7 +144,7 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            max-width: 1300px;
+            max-width: 1200px;
             background-color: white;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -189,6 +187,7 @@
             border: 1px solid #dee2e6;
             padding: 12px;
             text-align: left;
+            white-space: nowrap; /* Prevents line breaks within table headers */
         }
 
         .leaderboard-section th {
@@ -200,19 +199,10 @@
             background-color: #f8f9fa;
         }
 
-        .orange-cap, .purple-cap {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .orange-cap {
-            background-color: #ffa500;
-        }
-
-        .purple-cap {
-            background-color: #6f42c1;
+        .cap-icon {
+            width: 20px;
+            height: auto;
+            margin-right: 5px;
         }
 
         @@media (max-width: 767px) {
@@ -232,6 +222,7 @@
             }
         }
     </style>
+
 
 </main>
 
