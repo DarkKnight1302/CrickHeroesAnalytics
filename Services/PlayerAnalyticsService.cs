@@ -2,6 +2,8 @@
 using CricHeroesAnalytics.Models.ScoreCardModels;
 using CricHeroesAnalytics.Repositories;
 using CricHeroesAnalytics.Services.Interfaces;
+using Microsoft.AspNetCore.Routing.Constraints;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CricHeroesAnalytics.Services
 {
@@ -79,11 +81,25 @@ namespace CricHeroesAnalytics.Services
         private void UpdateTotalWickets(Entities.Player player)
         {
             int totalWickets = 0;
+            int runsGiven = 0;
+            int overs = 0;
+            int extraBalls = 0;
             foreach (var kv in player.PlayerWicketsMatchMap)
             {
                 totalWickets += kv.Value.Wickets;
+                runsGiven += kv.Value.RunsGiven;
+                overs += (int)kv.Value.Overs;
+                extraBalls += (int)((kv.Value.Overs * 10) % 10);
             }
             player.TotalWickets = totalWickets;
+            int totalBalls = overs * 6 + extraBalls;
+            double totalOvers = ((double)totalBalls / 6D);
+            player.OversBowled = totalOvers;
+            player.RunsGiven = runsGiven;
+            if (totalOvers > 0)
+            {
+                player.BowlingEconomy = Math.Round(((double)runsGiven / (double)totalOvers), 1);
+            }
         }
 
         private async Task UpdateBowling(string matchId, List<Bowling> bowling)
@@ -106,6 +122,8 @@ namespace CricHeroesAnalytics.Services
                 PlayerWicketsPerMatch playerWicketsPerMatch = new PlayerWicketsPerMatch();
                 playerWicketsPerMatch.MatchId = matchId;
                 playerWicketsPerMatch.Wickets = bowlingStats.Wickets;
+                playerWicketsPerMatch.RunsGiven = bowlingStats.Runs;
+                playerWicketsPerMatch.Overs = bowlingStats.Overs;
                 player.PlayerWicketsMatchMap[matchId] = playerWicketsPerMatch;
                 UpdateTotalWickets(player);
                 await this._playerRepository.CreateOrUpdatePlayer(player);

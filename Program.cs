@@ -28,7 +28,7 @@ builder.Services.AddQuartz(q =>
     q.AddTrigger(opts => opts
                         .ForJob(jobKey)
                         .WithIdentity("ScoreUpdateJob-trigger")
-                        .WithCronSchedule("0 0 */6 * * ?"));
+                        .WithCronSchedule("0 0 */12 * * ?"));
 });
 
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);

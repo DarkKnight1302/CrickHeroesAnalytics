@@ -19,6 +19,12 @@ namespace CricHeroesAnalytics.Entities
 
         public int TotalWickets { get; set; }
 
+        public int RunsGiven { get; set; }
+
+        public double OversBowled { get; set; }
+
+        public double BowlingEconomy { get; set; }
+
         public int MatchesPlayed { get; set; }
 
         public Dictionary<string, PlayerRunsPerMatch> PlayerRunMatchMap { get; set; } = new Dictionary<string, PlayerRunsPerMatch>();

@@ -23,7 +23,7 @@
 
     <div class="leaderboards-container">
         <div class="leaderboard-section">
-            <h2>Runs Scored</h2>
+            <h2>Orange Cap</h2>
             <table>
                 <thead>
                     <tr>
@@ -54,16 +54,17 @@
         </div>
 
         <div class="leaderboard-section">
-            <h2>Wickets Taken</h2>
+            <h2>Purple Cap</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Player</th>
                         <th>Wickets</th>
+                        <th>Economy</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var player in players.OrderByDescending(p => p.TotalWickets))
+                    @foreach (var player in players.OrderByDescending(p => p.TotalWickets).ThenBy(p => p.BowlingEconomy == 0 ? double.MaxValue : p.BowlingEconomy))
                     {
                         <tr>
                             <td>
@@ -74,6 +75,7 @@
                                 }
                             </td>
                             <td>@player.TotalWickets</td>
+                            <td>@player.BowlingEconomy</td>
                         </tr>
                     }
                 </tbody>
