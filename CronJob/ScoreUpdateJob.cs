@@ -11,12 +11,14 @@ namespace CricHeroesAnalytics.CronJob
         private readonly IMatchAnalyticService matchAnalyticService;
         private readonly ILogger logger;
         private readonly IJobExecutionRepository jobExecutionRepository;
+        private readonly IGwGroundAnalyticsService gwGroundAnalyticsService;
 
-        public ScoreUpdateJob(IMatchAnalyticService matchAnalyticService, ILogger<ScoreUpdateJob> logger, IJobExecutionRepository jobExecutionRepository) 
+        public ScoreUpdateJob(IMatchAnalyticService matchAnalyticService, ILogger<ScoreUpdateJob> logger, IJobExecutionRepository jobExecutionRepository, IGwGroundAnalyticsService gwGroundAnalyticsService) 
         {
             this.matchAnalyticService = matchAnalyticService;
             this.logger = logger;
             this.jobExecutionRepository = jobExecutionRepository;
+            this.gwGroundAnalyticsService = gwGroundAnalyticsService;
         }
         public async Task Execute(IJobExecutionContext context)
         {
@@ -26,7 +28,7 @@ namespace CricHeroesAnalytics.CronJob
             {
                 await this.jobExecutionRepository.StartJobExecution(jobId, JobName);
                 this.logger.LogInformation("Starting cron job");
-                await this.matchAnalyticService.UpdateLatestMatchData();
+                await this.gwGroundAnalyticsService.UpdateGroundSlots();
                 this.logger.LogInformation("Cron job completed");
                 await this.jobExecutionRepository.JobSucceeded(jobId);
             } catch (Exception ex)

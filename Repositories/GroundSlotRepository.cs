@@ -28,7 +28,7 @@ namespace CricHeroesAnalytics.Repositories
                     availableSlots.Add(enumerator.Current);
                 }
             }
-            return (List<GroundSlot>)availableSlots.OrderBy(x => x.DistanceInKm);
+            return (List<GroundSlot>)availableSlots;
         }
 
         public async Task<List<GroundSlot>> GetAllGroundSlotsAsync()
