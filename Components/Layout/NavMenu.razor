@@ -9,10 +9,15 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <!-- New Nav Item for Grounds Page -->
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/grounds" Match="NavLinkMatch.Prefix">
+                <span class="bi bi-geo-alt-fill-nav-menu" aria-hidden="true"></span> Grounds
             </NavLink>
         </div>
     </nav>
 </div>
-

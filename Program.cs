@@ -19,6 +19,9 @@ builder.Services.AddSingleton<IPlayerAnalyticsService, PlayerAnalyticsService>()
 builder.Services.AddSingleton<IMatchRepository, MatchRepository>();
 builder.Services.AddSingleton<IPlayerRepository, PlayerRepository>();
 builder.Services.AddSingleton<IJobExecutionRepository, JobExecutionRespository>();
+builder.Services.AddSingleton<IGroundSlotRepository, GroundSlotRepository>();
+builder.Services.AddSingleton<IGwGroundAnalyticsService, GwGroundAnalyticsService>();
+builder.Services.AddSingleton<IGWSportsApiClient, GWSportsApiClient>();
 builder.Services.AddQuartz(q =>
 {
     var jobKey = new JobKey("ScoreUpdateJob");
@@ -28,7 +31,7 @@ builder.Services.AddQuartz(q =>
     q.AddTrigger(opts => opts
                         .ForJob(jobKey)
                         .WithIdentity("ScoreUpdateJob-trigger")
-                        .WithCronSchedule("0 0 */12 * * ?"));
+                        .WithCronSchedule("0 0 */3 * * ?"));
 });
 
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
