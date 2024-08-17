@@ -14,7 +14,7 @@ namespace CricHeroesAnalytics.Entities
 
         public bool IsAvailable { get; set; } = false;
 
-        public List<DateTimeOffset> AvailableDates { get; set;} = new List<DateTimeOffset>();
+        public List<DateTime> AvailableDates { get; set;} = new List<DateTime>();
 
         public int DistanceInKm { get; set; }
     }
