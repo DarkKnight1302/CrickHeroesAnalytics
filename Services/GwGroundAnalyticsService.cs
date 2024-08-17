@@ -67,15 +67,15 @@ namespace CricHeroesAnalytics.Services
                             }
                             if (groundAvailable)
                             {
-                                if (!dbSlot.AvailableDates.Contains(futureDate))
+                                if (!dbSlot.AvailableDates.Contains(futureDate.Date))
                                 {
-                                    dbSlot.AvailableDates.Add(futureDate);
+                                    dbSlot.AvailableDates.Add(futureDate.Date);
                                     dbSlot.IsAvailable = true;
                                 }
                             }
                             else
                             {
-                                dbSlot.AvailableDates.Remove(futureDate);
+                                dbSlot.AvailableDates.Remove(futureDate.Date);
                                 dbSlot.IsAvailable = dbSlot.AvailableDates.Count > 0;
                             }
                             await groundSlotRepository.UpdateGroundSlot(dbSlot);
