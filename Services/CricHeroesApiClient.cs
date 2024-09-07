@@ -22,6 +22,7 @@ namespace CricHeroesAnalytics.Services
         }
         public async Task<List<MatchData>> GetMatches()
         {
+            this.logger.LogInformation("Request to fetch matches");
             await semaphore.WaitAsync();
             try
             {
