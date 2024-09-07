@@ -1,9 +1,12 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@using CricHeroesAnalytics.Entities
+@using CricHeroesAnalytics.Repositories
 @using CricHeroesAnalytics.Services.Interfaces
 @using CricHeroesAnalytics.Components.Layout
 @inject IPlayerAnalyticsService playerService
 @inject IMatchAnalyticService matchService;
+@inject IJobExecutionRepository jobExecutionRepository;
 @inherits LayoutComponentBase;
 @layout MainLayout;
 
@@ -15,11 +18,22 @@
         </h1>
     </div>
 
-    @{
-        var players = playerService.GetAllPlayers();
-        var topRunScorer = players.OrderByDescending(p => p.TotalRuns).FirstOrDefault();
-        var topWicketTaker = players.OrderByDescending(p => p.TotalWickets).FirstOrDefault();
+    @code {
+        private IEnumerable<Player> players = new List<Player>();
+        private Player topRunScorer;
+        private Player topWicketTaker;
+        private DateTimeOffset lastUpdateTime = DateTimeOffset.MinValue;
+
+        protected override async Task OnInitializedAsync()
+        {
+            players = await playerService.GetAllPlayersAsync();
+            topRunScorer = players.OrderByDescending(p => p.TotalRuns).FirstOrDefault();
+            topWicketTaker = players.OrderByDescending(p => p.TotalWickets).FirstOrDefault();
+            lastUpdateTime = await jobExecutionRepository.GetLastSuccessJobTime(Constants.GlobalConstants.CustomUpdateScoreJob);
+            this.StateHasChanged();
+        }
     }
+
 
     <div class="leaderboards-container">
         <div class="leaderboard-section">
@@ -34,7 +48,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var player in players.OrderByDescending(p => p.TotalRuns))
+                    @foreach (var player in players?.OrderByDescending(p => p.TotalRuns))
                     {
                         <tr>
                             <td>
@@ -64,7 +78,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var player in players.OrderByDescending(p => p.TotalWickets).ThenBy(p => p.BowlingEconomy == 0 ? double.MaxValue : p.BowlingEconomy))
+                    @foreach (var player in players?.OrderByDescending(p => p.TotalWickets).ThenBy(p => p.BowlingEconomy == 0 ? double.MaxValue : p.BowlingEconomy))
                     {
                         <tr>
                             <td>
@@ -84,6 +98,9 @@
     </div>
     <div style="text-align: center; margin-top: 20px;">
         <button @onclick="Refresh" class="btn btn-primary">Refresh Leaderboard</button>
+        <div style="font-size: 0.8em; color: grey; margin-top: 10px;">
+            Last updated: @lastUpdateTime.ToString("MMMM dd, yyyy hh:mm tt")
+        </div>
     </div>
     <style>
     body {
@@ -259,8 +276,10 @@
 </main>
 
 @code {
-    void Refresh()
+    async void Refresh()
     {
-        _ = matchService.UpdateLatestMatchData();
+        await matchService.UpdateLatestMatchData();
+        lastUpdateTime = await jobExecutionRepository.GetLastSuccessJobTime(Constants.GlobalConstants.CustomUpdateScoreJob);
+        this.StateHasChanged();
     }
 }

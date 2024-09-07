@@ -9,5 +9,7 @@ namespace CricHeroesAnalytics.Services.Interfaces
         public Task UpdatePlayerStatsForMatch(string matchId, List<Scorecard> Scorecard);
 
         public List<Entities.Player> GetAllPlayers();
+
+        public Task<List<Entities.Player>> GetAllPlayersAsync();
     }
 }

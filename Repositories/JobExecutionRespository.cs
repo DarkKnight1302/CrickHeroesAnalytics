@@ -1,5 +1,6 @@
 ﻿
 using CricHeroesAnalytics.Entities;
+using CricHeroesAnalytics.Extensions;
 using CricHeroesAnalytics.Services.Interfaces;
 using CricHeroesAnalytics.Utilities;
 using Microsoft.Azure.Cosmos;
@@ -15,6 +16,28 @@ namespace CricHeroesAnalytics.Repositories
         {
             this.cosmosDbService = cosmosDbService;
             this.logger = logger;
+        }
+
+        public async Task<DateTimeOffset> GetLastSuccessJobTime(string jobName)
+        {
+            var container = this.cosmosDbService.GetContainer("JobExecution");
+
+            var query = new QueryDefinition(
+                "SELECT TOP 1 c.Created FROM c WHERE c.JobName = @jobName AND c.Status = @status ORDER BY c.Created DESC")
+                .WithParameter("@jobName", jobName)
+                .WithParameter("@status", Enums.JobStatus.Succeeded.ToString());
+
+            var iterator = container.GetItemQueryIterator<JobExecution>(query);
+            var jobExecutions = await iterator.ReadNextAsync();
+
+            var lastSuccessJob = jobExecutions.FirstOrDefault();
+
+            if (lastSuccessJob != null)
+            {
+                return lastSuccessJob.Created.ToIndiaTime();
+            }
+
+            return DateTimeOffset.MinValue;
         }
 
         public async Task JobFailed(string jobId, string reason)

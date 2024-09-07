@@ -9,5 +9,7 @@ namespace CricHeroesAnalytics.Repositories
         public Task<Player> GetPlayer(string playerId);
 
         public List<Player> GetAllPlayers();
+
+        public Task<List<Player>> GetAllPlayersAsync();
     }
 }

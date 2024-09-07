@@ -35,6 +35,20 @@ namespace CricHeroesAnalytics.Repositories
             return players;
         }
 
+        public async Task<List<Player>> GetAllPlayersAsync()
+        {
+            List<Player> players = new List<Player>();
+            var container = FetchContainer();
+            var q = container.GetItemLinqQueryable<Player>(true);
+            var iterator = q.ToFeedIterator();
+            while (iterator.HasMoreResults)
+            {
+                FeedResponse<Player> feedResponse = await iterator.ReadNextAsync();
+                players.AddRange(feedResponse);
+            }
+            return players;
+        }
+
         public async Task<Player> GetPlayer(string playerId)
         {
             var container = FetchContainer();

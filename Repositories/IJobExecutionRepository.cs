@@ -1,4 +1,6 @@
-﻿namespace CricHeroesAnalytics.Repositories
+﻿using CricHeroesAnalytics.Enums;
+
+namespace CricHeroesAnalytics.Repositories
 {
     public interface IJobExecutionRepository
     {
@@ -7,5 +9,7 @@
         public Task JobSucceeded(string jobId);
 
         public Task JobFailed(string jobId, string reason);
+
+        public Task<DateTimeOffset> GetLastSuccessJobTime(string jobName);
     }
 }

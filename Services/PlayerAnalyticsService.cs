@@ -134,5 +134,10 @@ namespace CricHeroesAnalytics.Services
         {
             return this._playerRepository.GetAllPlayers();
         }
+
+        public async Task<List<Entities.Player>> GetAllPlayersAsync()
+        {
+            return await this._playerRepository.GetAllPlayersAsync();
+        }
     }
 }
