@@ -18,7 +18,7 @@ namespace CricHeroesAnalytics.Services
         {
             this.logger = logger;
             BrowserFetcher browserFetcher = new BrowserFetcher(SupportedBrowser.Chromium);
-            _ = browserFetcher.DownloadAsync().Result;
+            _ = browserFetcher.DownloadAsync(BrowserTag.Stable).Result;
         }
         public async Task<List<MatchData>> GetMatches()
         {
@@ -111,7 +111,10 @@ namespace CricHeroesAnalytics.Services
             {
                 Headless = false,
                 Args = ["--no-sandbox", "--disable-setuid-sandbox"],
-                ExecutablePath = "/home/site/wwwroot/Chromium/Linux-1352509/chrome-linux/chrome"
+                ExecutablePath = "/home/site/wwwroot/Chromium/Linux-1352509/chrome-linux/chrome",
+                Browser = SupportedBrowser.Chromium,
+                Channel = PuppeteerSharp.BrowserData.ChromeReleaseChannel.Stable,
+                LogProcess = true,
             });
 
             try
