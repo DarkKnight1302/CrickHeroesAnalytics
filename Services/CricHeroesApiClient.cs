@@ -111,6 +111,7 @@ namespace CricHeroesAnalytics.Services
             {
                 Headless = false,
                 Args = ["--no-sandbox", "--disable-setuid-sandbox"],
+                ExecutablePath = "/home/site/wwwroot/Chromium/Linux-1352509/chrome-linux/chrome"
             });
 
             try
