@@ -110,7 +110,7 @@ namespace CricHeroesAnalytics.Services
         {
             var launchOptions = new LaunchOptions
             {
-                Headless = false,
+                Headless = true,
                 Args = ["--no-sandbox", "--disable-setuid-sandbox"],
 #if DEBUG
                 // set nothing
