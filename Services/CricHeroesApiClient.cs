@@ -17,7 +17,7 @@ namespace CricHeroesAnalytics.Services
         public CricHeroesApiClient(ILogger<CricHeroesApiClient> logger)
         {
             this.logger = logger;
-            BrowserFetcher browserFetcher = new BrowserFetcher();
+            BrowserFetcher browserFetcher = new BrowserFetcher(SupportedBrowser.Chromium);
             _ = browserFetcher.DownloadAsync().Result;
         }
         public async Task<List<MatchData>> GetMatches()
