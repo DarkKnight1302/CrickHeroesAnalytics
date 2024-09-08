@@ -12,6 +12,7 @@ namespace CricHeroesAnalytics.Services
     {
         private readonly ILogger logger;
         private string buildId;
+        private const string BuildConstant = "ZpCJ8d7DFUHsO8Ku-HTWG";
         private SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
         public CricHeroesApiClient(ILogger<CricHeroesApiClient> logger)
@@ -107,7 +108,7 @@ namespace CricHeroesAnalytics.Services
 
         private async Task UpdateBuildId()
         {
-            var browser = await Puppeteer.LaunchAsync(new LaunchOptions
+            var launchOptions = new LaunchOptions
             {
                 Headless = false,
                 Args = ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -115,8 +116,10 @@ namespace CricHeroesAnalytics.Services
                 Browser = SupportedBrowser.Chromium,
                 Channel = PuppeteerSharp.BrowserData.ChromeReleaseChannel.Stable,
                 LogProcess = true,
-            });
+            };
+            launchOptions.Env.Add("LD_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu");
 
+            var browser = await Puppeteer.LaunchAsync(launchOptions);
             try
             {
 
