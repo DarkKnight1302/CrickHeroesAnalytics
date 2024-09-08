@@ -112,8 +112,12 @@ namespace CricHeroesAnalytics.Services
             {
                 Headless = false,
                 Args = ["--no-sandbox", "--disable-setuid-sandbox"],
+#if DEBUG
+                // set nothing
+#else
                 ExecutablePath = "/home/site/wwwroot/Chromium/Linux-1352509/chrome-linux/chrome",
                 Browser = SupportedBrowser.Chromium,
+#endif
                 Channel = PuppeteerSharp.BrowserData.ChromeReleaseChannel.Stable,
                 LogProcess = true,
             };
