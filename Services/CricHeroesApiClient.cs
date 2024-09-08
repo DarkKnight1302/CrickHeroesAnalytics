@@ -109,7 +109,8 @@ namespace CricHeroesAnalytics.Services
         {
             var browser = await Puppeteer.LaunchAsync(new LaunchOptions
             {
-                Headless = false // Set to false if you want to see the browser window
+                Headless = false,
+                Args = ["--no-sandbox", "--disable-setuid-sandbox"],
             });
 
             try
