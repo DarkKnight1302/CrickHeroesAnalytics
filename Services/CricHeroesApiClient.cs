@@ -18,7 +18,7 @@ namespace CricHeroesAnalytics.Services
         {
             this.logger = logger;
             BrowserFetcher browserFetcher = new BrowserFetcher(SupportedBrowser.Chromium);
-            _ = browserFetcher.DownloadAsync(BrowserTag.Stable).Result;
+            _ = browserFetcher.DownloadAsync().Result;
         }
         public async Task<List<MatchData>> GetMatches()
         {
