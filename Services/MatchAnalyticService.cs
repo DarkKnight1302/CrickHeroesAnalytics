@@ -42,7 +42,7 @@ namespace CricHeroesAnalytics.Services
                 List<MatchData> matchData = await cricHeroesApiClient.GetMatches();
                 if (matchData == null || matchData.Count == 0)
                 {
-                    await this._jobExecutionRepository.JobFailed(jobId, "Error in Fetching match data");
+                    await this._jobExecutionRepository.JobFailed(jobId, "Error in Fetching match data, not found");
                     _logger.LogInformation("No matches found");
                     return;
                 }
