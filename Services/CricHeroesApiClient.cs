@@ -2,6 +2,8 @@
 using CricHeroesAnalytics.Models.ScoreCardModels;
 using CricHeroesAnalytics.Services.Interfaces;
 using CricHeroesAnalytics.Utilities;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium;
 using PuppeteerSharp;
 using System.Net.Http.Headers;
 using System.Security.Policy;
@@ -18,9 +20,6 @@ namespace CricHeroesAnalytics.Services
         public CricHeroesApiClient(ILogger<CricHeroesApiClient> logger)
         {
             this.logger = logger;
-            buildId = BuildConstant;
-            /*BrowserFetcher browserFetcher = new BrowserFetcher(SupportedBrowser.Chromium);
-            _ = browserFetcher.DownloadAsync().Result;*/
         }
         public async Task<List<MatchData>> GetMatches()
         {
@@ -28,6 +27,7 @@ namespace CricHeroesAnalytics.Services
             await semaphore.WaitAsync();
             try
             {
+                await this.FetchBuildUsingSelenium();
                 using (HttpClient client = new HttpClient())
                 {
                     // Set base address
@@ -103,6 +103,41 @@ namespace CricHeroesAnalytics.Services
                     throw new InvalidDataException("Invalid Scorecard response");
                 }
                 return scoreCardResponse;
+            }
+        }
+
+        private async Task FetchBuildUsingSelenium()
+        {
+            using (IWebDriver driver = new ChromeDriver())
+            {
+                // Navigate to the webpage
+                driver.Navigate().GoToUrl("https://cricheroes.com/team-profile/5455774/cult-100/matches");
+
+                // Optionally wait for the page to load completely
+                await Task.Delay(2000);
+
+                // Get the page source
+                string htmlContent = driver.PageSource;
+
+                if (htmlContent != null)
+                {
+                    int index = htmlContent.IndexOf("/_buildManifest.js");
+                    if (index < 0)
+                    {
+                        return;
+                    }
+                    int endIndex = index;
+                    index--;
+                    while (htmlContent[index] != '/')
+                    {
+                        index--;
+                    }
+                    int startIndex = index + 1;
+                    this.buildId = htmlContent.Substring(startIndex, endIndex - startIndex);
+                }
+
+                // Close the browser
+                driver.Quit();
             }
         }
 
