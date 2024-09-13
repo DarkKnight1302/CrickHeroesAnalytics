@@ -108,7 +108,11 @@ namespace CricHeroesAnalytics.Services
 
         private async Task FetchBuildUsingSelenium()
         {
-            using (IWebDriver driver = new ChromeDriver())
+            var options = new ChromeOptions();
+            options.AddArguments("--disable-gpu");  // Disable GPU hardware acceleration
+            options.AddArguments("--no-sandbox");  // Disable the sandbox for Chrome (important for Linux)
+            options.AddArguments("--disable-dev-shm-usage");  // Overcome limited resource problems
+            using (IWebDriver driver = new ChromeDriver(options))
             {
                 // Navigate to the webpage
                 driver.Navigate().GoToUrl("https://cricheroes.com/team-profile/5455774/cult-100/matches");
