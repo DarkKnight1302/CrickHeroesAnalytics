@@ -12,14 +12,15 @@ namespace CricHeroesAnalytics.Services
     {
         private readonly ILogger logger;
         private string buildId;
-        private const string BuildConstant = "ZpCJ8d7DFUHsO8Ku-HTWG";
+        private const string BuildConstant = "Vsq59RPdxKMYwYBlwEx8x";
         private SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
         public CricHeroesApiClient(ILogger<CricHeroesApiClient> logger)
         {
             this.logger = logger;
-            BrowserFetcher browserFetcher = new BrowserFetcher(SupportedBrowser.Chromium);
-            _ = browserFetcher.DownloadAsync().Result;
+            buildId = BuildConstant;
+            /*BrowserFetcher browserFetcher = new BrowserFetcher(SupportedBrowser.Chromium);
+            _ = browserFetcher.DownloadAsync().Result;*/
         }
         public async Task<List<MatchData>> GetMatches()
         {
@@ -27,7 +28,6 @@ namespace CricHeroesAnalytics.Services
             await semaphore.WaitAsync();
             try
             {
-                await UpdateBuildId();
                 using (HttpClient client = new HttpClient())
                 {
                     // Set base address
