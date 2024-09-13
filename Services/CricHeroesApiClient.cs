@@ -19,6 +19,7 @@ namespace CricHeroesAnalytics.Services
 
         public CricHeroesApiClient(ILogger<CricHeroesApiClient> logger)
         {
+            buildId = BuildConstant;
             this.logger = logger;
         }
         public async Task<List<MatchData>> GetMatches()
@@ -27,7 +28,6 @@ namespace CricHeroesAnalytics.Services
             await semaphore.WaitAsync();
             try
             {
-                await this.FetchBuildUsingSelenium();
                 using (HttpClient client = new HttpClient())
                 {
                     // Set base address
