@@ -13,6 +13,8 @@ namespace CricHeroesAnalytics.Entities
 
         public int TotalRuns { get; set; }
 
+        public int GotOutCount { get; set; } = 0;
+
         public int BallsPlayed { get; set; }
 
         public int StrikeRate { get; set; } = 0;

@@ -1,4 +1,5 @@
-﻿using CricHeroesAnalytics.Entities;
+﻿using CricHeroesAnalytics.Constants;
+using CricHeroesAnalytics.Entities;
 using CricHeroesAnalytics.Models.ScoreCardModels;
 using CricHeroesAnalytics.Repositories;
 using CricHeroesAnalytics.Services.Interfaces;
@@ -50,6 +51,8 @@ namespace CricHeroesAnalytics.Services
                 {
                     continue;
                 }
+                int outCount = GlobalConstants.NotOutList.Contains(battingStats.HowToOut) ? 1 : 0;
+                player.GotOutCount += outCount;
                 PlayerRunsPerMatch playerRunsPerMatch = new PlayerRunsPerMatch();
                 playerRunsPerMatch.MatchId = matchId;
                 playerRunsPerMatch.Runs = battingStats.Runs;

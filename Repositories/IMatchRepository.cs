@@ -7,5 +7,7 @@ namespace CricHeroesAnalytics.Repositories
         public Task<bool> IsMatchAlreadyUpdated(string matchId);
 
         public Task AddMatch(Match match);
+
+        public Task<List<Match>> GetAllMatches();
     }
 }

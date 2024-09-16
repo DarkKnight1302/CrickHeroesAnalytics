@@ -7,5 +7,7 @@
         public int Runs {  get; set; }
 
         public int BallsPlayed { get; set; }
+
+        public bool WasNotOut { get; set; } = false;
     }
 }
