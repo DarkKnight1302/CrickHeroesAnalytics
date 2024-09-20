@@ -51,7 +51,7 @@ namespace CricHeroesAnalytics.Services
                 {
                     continue;
                 }
-                int outCount = GlobalConstants.NotOutList.Contains(battingStats.HowToOut) ? 1 : 0;
+                int outCount = GlobalConstants.NotOutList.Contains(battingStats.HowToOut) ? 0 : 1;
                 player.GotOutCount += outCount;
                 PlayerRunsPerMatch playerRunsPerMatch = new PlayerRunsPerMatch();
                 playerRunsPerMatch.MatchId = matchId;

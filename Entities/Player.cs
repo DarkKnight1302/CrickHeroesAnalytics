@@ -13,6 +13,8 @@ namespace CricHeroesAnalytics.Entities
 
         public int TotalRuns { get; set; }
 
+        public double BattingAverage => this.GotOutCount > 0 ? this.TotalRuns / this.GotOutCount : 0;
+
         public int GotOutCount { get; set; } = 0;
 
         public int BallsPlayed { get; set; }
@@ -28,6 +30,8 @@ namespace CricHeroesAnalytics.Entities
         public double BowlingEconomy { get; set; }
 
         public int MatchesPlayed { get; set; }
+
+        public DateTimeOffset LastMatchUpdated { get; set; } = DateTimeOffset.MinValue;
 
         public Dictionary<string, PlayerRunsPerMatch> PlayerRunMatchMap { get; set; } = new Dictionary<string, PlayerRunsPerMatch>();
 
