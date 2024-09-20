@@ -13,7 +13,7 @@ namespace CricHeroesAnalytics.Entities
 
         public int TotalRuns { get; set; }
 
-        public double BattingAverage => this.GotOutCount > 0 ? this.TotalRuns / this.GotOutCount : 0;
+        public double BattingAverage => Math.Round(this.GotOutCount > 0 ? (double)this.TotalRuns / (double)this.GotOutCount : 0D, 1);
 
         public int GotOutCount { get; set; } = 0;
 
