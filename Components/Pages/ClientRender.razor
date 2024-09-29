@@ -8,10 +8,7 @@
     <h2>Client Render</h2>
 </div>
 
-@code {
-    
-         apiClient.FetchBuildUsingSelenium();
-
-        // After fetching, navigate to the home page
-        JS.InvokeVoidAsync("navigateToPage", "/");
+@{   
+    apiClient.FetchBuildUsingSelenium();
+    JS.InvokeVoidAsync("navigateToPage", "/");
 }
