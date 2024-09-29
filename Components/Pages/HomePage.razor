@@ -279,7 +279,7 @@
 @code {
     async void Refresh()
     {
-        await JS.InvokeVoidAsync("navigateToPage", "/clientRender");
+        //await JS.InvokeVoidAsync("navigateToPage", "/clientRender");
         await matchService.UpdateLatestMatchData();
         lastUpdateTime = await jobExecutionRepository.GetLastSuccessJobTime(Constants.GlobalConstants.CustomUpdateScoreJob);
         this.StateHasChanged();
