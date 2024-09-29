@@ -1,0 +1,17 @@
+﻿@page "/clientRender"
+@using CricHeroesAnalytics.Services.Interfaces
+@inject NavigationManager Navigation
+@inject ICricHeroesApiClient apiClient
+@inject IJSRuntime JS
+
+<div class="header-container">
+    <h2>Client Render</h2>
+</div>
+
+@code {
+    
+         apiClient.FetchBuildUsingSelenium();
+
+        // After fetching, navigate to the home page
+        JS.InvokeVoidAsync("navigateToPage", "/");
+}

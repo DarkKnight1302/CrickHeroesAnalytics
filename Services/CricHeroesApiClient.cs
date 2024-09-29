@@ -14,7 +14,7 @@ namespace CricHeroesAnalytics.Services
     {
         private readonly ILogger logger;
         private string buildId;
-        private const string BuildConstant = "kntCVKAlVwHrmO4BdU-3H";
+        private const string BuildConstant = "kntCVKAlVwHrmO4BdU";
         private SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
         public CricHeroesApiClient(ILogger<CricHeroesApiClient> logger)
@@ -106,7 +106,7 @@ namespace CricHeroesAnalytics.Services
             }
         }
 
-        private async Task FetchBuildUsingSelenium()
+        public void FetchBuildUsingSelenium()
         {
             var options = new ChromeOptions();
             options.AddArguments("--disable-gpu");  // Disable GPU hardware acceleration
@@ -118,7 +118,7 @@ namespace CricHeroesAnalytics.Services
                 driver.Navigate().GoToUrl("https://cricheroes.com/team-profile/5455774/cult-100/matches");
 
                 // Optionally wait for the page to load completely
-                await Task.Delay(2000);
+                Thread.Sleep(1000);
 
                 // Get the page source
                 string htmlContent = driver.PageSource;
@@ -138,6 +138,7 @@ namespace CricHeroesAnalytics.Services
                     }
                     int startIndex = index + 1;
                     this.buildId = htmlContent.Substring(startIndex, endIndex - startIndex);
+                    this.logger.LogInformation($"New build Information {buildId}");
                 }
 
                 // Close the browser
