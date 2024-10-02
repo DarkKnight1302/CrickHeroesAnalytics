@@ -256,5 +256,10 @@ namespace CricHeroesAnalytics.Services
             teamB = teamB.Replace(" ", "-");
             return $"{teamA}-vs-{teamB}";
         }
+
+        public void UpdateBuildId(string buildIdLatest)
+        {
+            this.buildId = buildIdLatest;
+        }
     }
 }

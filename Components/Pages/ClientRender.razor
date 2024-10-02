@@ -3,12 +3,31 @@
 @inject NavigationManager Navigation
 @inject ICricHeroesApiClient apiClient
 @inject IJSRuntime JS
+@inject HttpClient Http
 
 <div class="header-container">
     <h2>Client Render</h2>
 </div>
 
-@{   
-    apiClient.FetchBuildUsingSelenium();
-    JS.InvokeVoidAsync("navigateToPage", "/");
+@code {   
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetStringAsync("https://cricheroes.com/team-profile/5455774/cult-100/matches");
+        if (!string.IsNullOrEmpty(response))
+        {
+            int index = response.IndexOf("/_buildManifest.js");
+            if (index > 0)
+            {
+                int endIndex = index;
+                index--;
+                while (response[index] != '/')
+                {
+                    index--;
+                }
+                int startIndex = index + 1;
+                string buildId = response.Substring(startIndex, endIndex - startIndex);
+                Console.WriteLine($"New build Information: {buildId}");
+            }
+        }
+    }
 }

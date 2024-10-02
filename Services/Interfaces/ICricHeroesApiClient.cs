@@ -10,5 +10,7 @@ namespace CricHeroesAnalytics.Services.Interfaces
         public Task<ScoreCardResponse> GetScoreCard(MatchData matchData);
 
         public void FetchBuildUsingSelenium();
+
+        public void UpdateBuildId(string buildId);
     }
 }

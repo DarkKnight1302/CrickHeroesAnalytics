@@ -22,6 +22,7 @@ builder.Services.AddSingleton<IJobExecutionRepository, JobExecutionRespository>(
 builder.Services.AddSingleton<IGroundSlotRepository, GroundSlotRepository>();
 builder.Services.AddSingleton<IGwGroundAnalyticsService, GwGroundAnalyticsService>();
 builder.Services.AddSingleton<IGWSportsApiClient, GWSportsApiClient>();
+builder.Services.AddHttpClient();
 builder.Services.AddQuartz(q =>
 {
     var jobKey = new JobKey("ScoreUpdateJob");
