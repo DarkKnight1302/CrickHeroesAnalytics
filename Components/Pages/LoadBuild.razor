@@ -1,0 +1,16 @@
+﻿@page "/LoadBuild"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+
+<h3>Load Build</h3>
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <button class="btn btn-primary" @onclick="OnButtonClick">Load Build</button>
+</div>
+
+@code {
+    private async void OnButtonClick()
+    {
+        await JS.InvokeVoidAsync("navigateToPage", "/clientRender");
+    }
+}
