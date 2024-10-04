@@ -57,6 +57,7 @@ namespace CricHeroesAnalytics.Services
                 playerRunsPerMatch.MatchId = matchId;
                 playerRunsPerMatch.Runs = battingStats.Runs;
                 playerRunsPerMatch.BallsPlayed = battingStats.Balls;
+                playerRunsPerMatch.WasNotOut = GlobalConstants.NotOutList.Contains(battingStats.HowToOut);
                 player.PlayerRunMatchMap[matchId] = playerRunsPerMatch;
                 UpdateTotalRuns(player);
                 await this._playerRepository.CreateOrUpdatePlayer(player);
