@@ -3,7 +3,6 @@ using CricHeroesAnalytics.Services.Interfaces;
 using Quartz;
 using CricHeroesAnalytics.Entities;
 using CricHeroesAnalytics.Models.ScoreCardModels;
-using System.Runtime.Intrinsics.Arm;
 using CricHeroesAnalytics.Constants;
 
 namespace CricHeroesAnalytics.CronJob
