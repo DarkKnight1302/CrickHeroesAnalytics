@@ -41,8 +41,11 @@
             { "sukruth-cricket-ground", 27 }, // 27 km
             { "hitman-azhit-cricket-ground", 27 }, // 27 km
             { "rao's-cricket-ground", 27 }, // 27km
+            { "sukruth-cricket-ground", 28 },
             { "msk-cricket-ground-vattinagulapally", 14 }, // 14 km
+            { "dazzlers", 22 },
             { "vvr2-cricket-ground", 22 }, //22km
+            { "kandalas", 29 },
             { "reet-cricket-club", 30 }, // 30 km
             { "dcc-sports-arena", 10 }, // 9.5 km
             { "albatross-cricket-ground", 30 }, // 30 km
