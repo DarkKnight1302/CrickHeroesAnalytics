@@ -19,7 +19,6 @@
             { "harsha-cricket-ground-aziznagar", 20 }, // 19.5 km
             { "abhiram-cricket-county-donthanpalli-shankarpally", 20 }, // 20 km
             { "gurukul-ground-moinabad", 20 }, // 20km
-            { "ycc-cricket-ground", 20 }, // 20 km
             { "onechampion1-cricket-grounds", 21 }, //21 km
             { "azpro-cricket-ground", 21 }, // 21km
             { "scg-cricket-ground", 22 }, // 22 km
@@ -28,7 +27,6 @@
             { "brindaground-2", 22 }, // 22 km
             { "suresh-cricket-ground", 22 }, // 22 km
             { "sz-cricket-ground", 22 }, // 22 km
-            { "beside-arun-gardens,chilukuru-balaji-temple-road,hyderabad-500075", 22 }, // 22 km
             { "dazzlers", 22 },
             { "olympus-zeus", 25 }, // 25 km
             { "mps-cricket-ground-shamshabad", 25 }, // 25km
