@@ -29,6 +29,7 @@
             { "suresh-cricket-ground", 22 }, // 22 km
             { "sz-cricket-ground", 22 }, // 22 km
             { "beside-arun-gardens,chilukuru-balaji-temple-road,hyderabad-500075", 22 }, // 22 km
+            { "dazzlers", 22 },
             { "olympus-zeus", 25 }, // 25 km
             { "mps-cricket-ground-shamshabad", 25 }, // 25km
             { "sr-cricket-ground", 25 }, //25 km
@@ -43,7 +44,6 @@
             { "rao's-cricket-ground", 27 }, // 27km
             { "sukruth-cricket-ground", 28 },
             { "msk-cricket-ground-vattinagulapally", 14 }, // 14 km
-            { "dazzlers", 22 },
             { "vvr2-cricket-ground", 22 }, //22km
             { "kandalas", 29 },
             { "reet-cricket-club", 30 }, // 30 km
