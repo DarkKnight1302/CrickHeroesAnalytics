@@ -23,52 +23,59 @@ namespace CricHeroesAnalytics.Services
 
         public async Task<GroundSlots> GetGroundSlotsAsync(string ground, DateTimeOffset dateTime)
         {
-            this.logger.LogInformation("Calling Get Ground Slots");
-            string formatedDate = dateTime.ToString("yyyy-MM-dd");
-            HttpClient client = this.GetHttpClient(ground);
-            var obj = new { l = "hyderabad", g = ground, s = "cricket", d = formatedDate };
-            string value = JsonConvert.SerializeObject(obj);
-            string encoded = HttpUtility.UrlEncode(value);
-            var content = new StringContent($"data={encoded}");
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded") { CharSet = "UTF-8" };
-
-            // Send the POST request
-            HttpResponseMessage response = await client.PostAsync(GwUrl, content);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                throw new InvalidDataException($"Non Success status code from GW {response.StatusCode}");
-            }
-            string responseString = string.Empty;
-            using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+                this.logger.LogInformation("Calling Get Ground Slots");
+                string formatedDate = dateTime.ToString("yyyy-MM-dd");
+                HttpClient client = this.GetHttpClient(ground);
+                var obj = new { l = "hyderabad", g = ground, s = "cricket", d = formatedDate };
+                string value = JsonConvert.SerializeObject(obj);
+                string encoded = HttpUtility.UrlEncode(value);
+                var content = new StringContent($"data={encoded}");
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded") { CharSet = "UTF-8" };
+
+                // Send the POST request
+                HttpResponseMessage response = await client.PostAsync(GwUrl, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new InvalidDataException($"Non Success status code from GW {response.StatusCode}");
+                }
+                string responseString = string.Empty;
+                using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+                {
+                    Stream decompressionStream = null;
+                    if (response.Content.Headers.ContentEncoding.Contains("gzip"))
+                    {
+                        decompressionStream = new GZipStream(responseStream, CompressionMode.Decompress);
+                    }
+                    else if (response.Content.Headers.ContentEncoding.Contains("deflate"))
+                    {
+                        decompressionStream = new DeflateStream(responseStream, CompressionMode.Decompress);
+                    }
+                    else if (response.Content.Headers.ContentEncoding.Contains("br"))
+                    {
+                        decompressionStream = new BrotliStream(responseStream, CompressionMode.Decompress);
+                    }
+                    else
+                    {
+                        decompressionStream = responseStream; // No compression
+                    }
+
+                    using (decompressionStream)
+                    using (StreamReader reader = new StreamReader(decompressionStream))
+                    {
+                        responseString = await reader.ReadToEndAsync();
+                        this.logger.LogInformation(responseString);
+                    }
+                }
+
+                return JsonConvert.DeserializeObject<GroundSlots>(responseString);
+            } catch (Exception e)
             {
-                Stream decompressionStream = null;
-                if (response.Content.Headers.ContentEncoding.Contains("gzip"))
-                {
-                    decompressionStream = new GZipStream(responseStream, CompressionMode.Decompress);
-                }
-                else if (response.Content.Headers.ContentEncoding.Contains("deflate"))
-                {
-                    decompressionStream = new DeflateStream(responseStream, CompressionMode.Decompress);
-                }
-                else if (response.Content.Headers.ContentEncoding.Contains("br"))
-                {
-                    decompressionStream = new BrotliStream(responseStream, CompressionMode.Decompress);
-                }
-                else
-                {
-                    decompressionStream = responseStream; // No compression
-                }
-
-                using (decompressionStream)
-                using (StreamReader reader = new StreamReader(decompressionStream))
-                {
-                    responseString = await reader.ReadToEndAsync();
-                    this.logger.LogInformation(responseString);
-                }
+                this.logger.LogError($"Exception Calling Get Ground Slots {ground} : {e.Message}");
+                return null;
             }
-
-            return JsonConvert.DeserializeObject<GroundSlots>(responseString);
         }
 
         private HttpClient GetHttpClient(string ground)
