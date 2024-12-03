@@ -41,6 +41,10 @@ namespace CricHeroesAnalytics.Services
                     foreach (var task in tasks)
                     {
                         (GroundSlots groundSlots, string groundName) = task.Result;
+                        if (groundSlots == null || !groundSlots.Status.Equals("success"))
+                        {
+                            this._logger.LogError($"No slots found for ground {groundName}");
+                        }
                         if (groundSlots != null && groundSlots.Status.Equals("success") && groundSlots.Data != null)
                         {
                             bool groundAvailable = false;

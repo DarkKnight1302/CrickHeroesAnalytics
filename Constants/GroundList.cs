@@ -15,6 +15,8 @@
             { "the-pavilion-cricket-stadium", 14 }, // 14 km
             { "vscg-cricket-ground", 14 }, // 14 km
             { "thrill-cricket-ground-1-appa-junction", 15 }, // 15 km
+            { "pmr-grounds1", 19 },
+            { "pmr-grounds", 19 },
             { "am-cricket-ground", 19 }, // 19 km
             { "harsha-cricket-ground-aziznagar", 20 }, // 19.5 km
             { "abhiram-cricket-county-donthanpalli-shankarpally", 20 }, // 20 km
@@ -37,10 +39,10 @@
             { "olympus-cricket-ground", 25 }, // 25 km
             { "aston-cricket-ground", 26 }, // 26 km
             { "azkit-cricket-ground", 26 }, // 26 km
+            { "warriors-ground", 27 },
             { "sukruth-cricket-ground", 27 }, // 27 km
             { "hitman-azhit-cricket-ground", 27 }, // 27 km
             { "rao's-cricket-ground", 27 }, // 27km
-            { "sukruth-cricket-ground", 28 },
             { "msk-cricket-ground-vattinagulapally", 14 }, // 14 km
             { "vvr2-cricket-ground", 22 }, //22km
             { "kandalas", 29 },
@@ -49,7 +51,14 @@
             { "albatross-cricket-ground", 30 }, // 30 km
             { "smr-cricket-ground", 30 }, //30 km
             { "golconda-cricket-club", 30 }, // 30 km
-            { "ballebaaz-maidan", 31 }
+            { "kdr-ground-2", 31},
+            { "thirupathireddy-cricket-ground", 31 },
+            { "sahara-cricket-ground", 32},
+            { "ballebaaz-maidan", 31 },
+            { "lfc-cricket-ground", 32 },
+            { "kbr-cricket-ground", 32 },
+            { "hummingbird-cricket-stadium", 33},
+            { "apr-cricket-ground", 34 }
         };
     }
 }

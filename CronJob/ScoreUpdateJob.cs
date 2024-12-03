@@ -27,7 +27,7 @@ namespace CricHeroesAnalytics.CronJob
         }
         public async Task Execute(IJobExecutionContext context)
         {
-            string JobName = context.JobDetail.Key.Name;
+            string JobName = context?.JobDetail?.Key?.Name ?? "Test";
             string jobId = $"{JobName}_{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
             try
             {

@@ -66,7 +66,7 @@ namespace CricHeroesAnalytics.Services
                     using (StreamReader reader = new StreamReader(decompressionStream))
                     {
                         responseString = await reader.ReadToEndAsync();
-                        this.logger.LogInformation(responseString);
+                        this.logger.LogInformation($"Slot details for ground {ground} : {responseString}");
                     }
                 }
 
