@@ -28,6 +28,14 @@
         protected override async Task OnInitializedAsync()
         {
             players = await playerService.GetAllPlayersAsync();
+            foreach(var p in players)
+            {
+                if (p.TotalWickets > 0)
+                {
+                    double bowlingAverage = ((double)p.RunsGiven / (double)p.TotalWickets);
+                    p.BowlingAverage = Math.Round(bowlingAverage, 1);
+                }
+            }
             topRunScorer = players.OrderByDescending(p => p.TotalRuns).FirstOrDefault();
             topWicketTaker = players.OrderByDescending(p => p.TotalWickets).FirstOrDefault();
             lastUpdateTime = await jobExecutionRepository.GetLastSuccessJobTime(Constants.GlobalConstants.CustomUpdateScoreJob);
@@ -75,6 +83,7 @@
                     <tr>
                         <th>Player</th>
                         <th>Wickets</th>
+                        <th>Bowling Average</th>
                         <th>Economy</th>
                     </tr>
                 </thead>
@@ -90,6 +99,7 @@
                                 }
                             </td>
                             <td>@player.TotalWickets</td>
+                            <td>@player.BowlingAverage</td>
                             <td>@player.BowlingEconomy</td>
                         </tr>
                     }

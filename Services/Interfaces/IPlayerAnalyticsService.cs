@@ -11,5 +11,7 @@ namespace CricHeroesAnalytics.Services.Interfaces
         public List<Entities.Player> GetAllPlayers();
 
         public Task<List<Entities.Player>> GetAllPlayersAsync();
+
+        public List<Entities.Player> GetAllRounderLeaderboard();
     }
 }

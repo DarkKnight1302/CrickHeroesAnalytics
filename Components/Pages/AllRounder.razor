@@ -1,0 +1,161 @@
+﻿@page "/AllRounderLeaderboard"
+@using CricHeroesAnalytics.Entities
+@using CricHeroesAnalytics.Repositories
+@using CricHeroesAnalytics.Services.Interfaces
+@using CricHeroesAnalytics.Components.Layout
+@inject IPlayerAnalyticsService playerService
+
+<main>
+    <div class="header">
+        <h1>
+            <img src="/images/Final_Cult11.png" alt="Logo" class="logo" />
+            Cult 11 All Rounders Leaderboard
+        </h1>
+    </div>
+
+    @code {
+        private IEnumerable<Player> players = new List<Player>();
+
+        protected override async Task OnInitializedAsync()
+        {
+            players = playerService.GetAllRounderLeaderboard();
+            this.StateHasChanged();
+        }
+    }
+
+    <div class="leaderboards-container">
+        <div class="leaderboard-section">
+            <h2>All Rounder Leaderboard</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Batting Average</th>
+                        <th>Batting Strike rate</th>
+                        <th>Bowling Average</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var player in players.Select((p, index) => new { Player = p, Rank = index + 1 }))
+                    {
+                        <tr>
+                            <td>@player.Rank</td>
+                            <td>
+                                <a href="@player.Player.PlayerProfile" target="_blank">@player.Player.Name</a>
+                            </td>
+                            <td>@player.Player.BattingAverage</td>
+                            <td>@player.Player.StrikeRate</td>
+                            <td>@player.Player.BowlingAverage</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #ffffff, #e9ecef);
+            color: #343a40;
+        }
+
+        .header {
+            text-align: center;
+            margin: 20px 0;
+            background-color: #495057;
+            padding: 20px;
+            color: white;
+            border-radius: 8px;
+        }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        .logo {
+            width: 100px;
+            height: auto;
+            margin-right: 15px;
+        }
+
+        .leaderboards-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin: 20px;
+        }
+
+        .leaderboard-section {
+            width: 100%;
+        }
+
+        .leaderboard-section h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+        }
+
+        th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #e9ecef;
+        }
+
+        tr:hover {
+            background-color: #d6d8db;
+            cursor: pointer;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @@media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .leaderboards-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</main>

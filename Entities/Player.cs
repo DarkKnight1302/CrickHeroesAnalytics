@@ -33,6 +33,8 @@ namespace CricHeroesAnalytics.Entities
 
         public int MatchesPlayed { get; set; }
 
+        public double BowlingAverage { get; set; }
+
         public DateTimeOffset LastMatchUpdated { get; set; } = DateTimeOffset.MinValue;
 
         public Dictionary<string, PlayerRunsPerMatch> PlayerRunMatchMap { get; set; } = new Dictionary<string, PlayerRunsPerMatch>();
