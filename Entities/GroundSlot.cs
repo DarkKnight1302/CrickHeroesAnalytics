@@ -12,6 +12,8 @@ namespace CricHeroesAnalytics.Entities
 
         public string GroundUrl { get; set; }
 
+        public bool IsMorningSlotAvailable { get; set; } = false;
+
         public bool IsAvailable { get; set; } = false;
 
         public List<DateTime> AvailableDates { get; set;} = new List<DateTime>();
