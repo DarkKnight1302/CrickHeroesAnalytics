@@ -11,10 +11,10 @@ namespace CricHeroesAnalytics.Models.ScoreCardModels
         public int InningNumber { get; set; }
 
         [JsonProperty("inning_start_time")]
-        public DateTime InningStartTime { get; set; }
+        public DateTime? InningStartTime { get; set; }
 
         [JsonProperty("inning_end_time")]
-        public DateTime InningEndTime { get; set; }
+        public DateTime? InningEndTime { get; set; }
 
         [JsonProperty("is_declare")]
         public int IsDeclare { get; set; }

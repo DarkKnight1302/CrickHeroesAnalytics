@@ -16,7 +16,7 @@ namespace CricHeroesAnalytics.Models.ScoreCardModels
         public string ball_type { get; set; }
         public string status { get; set; }
         public int overs { get; set; }
-        public int balls { get; set; }
+        public int? balls { get; set; }
         public string over_reduce { get; set; }
         public int is_dl { get; set; }
         public int is_vjd { get; set; }
