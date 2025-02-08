@@ -5,13 +5,13 @@
 @using CricHeroesAnalytics.Services.Interfaces
 @using CricHeroesAnalytics.Components.Layout
 @inject IPlayerAnalyticsService playerService
-@inject IMatchAnalyticService matchService;
-@inject IJobExecutionRepository jobExecutionRepository;
-@inherits LayoutComponentBase;
-@layout MainLayout;
+@inject IMatchAnalyticService matchService
+@inject IJobExecutionRepository jobExecutionRepository
+@inherits LayoutComponentBase
+@layout MainLayout
 @inject IJSRuntime JS
 
-<main>
+<main class="page-container">
     <div class="header">
         <h1>
             <img src="/images/Final_Cult11.png" alt="Logo" class="logo" />
@@ -28,7 +28,7 @@
         protected override async Task OnInitializedAsync()
         {
             players = await playerService.GetAllPlayersAsync();
-            foreach(var p in players)
+            foreach (var p in players)
             {
                 if (p.TotalWickets > 0)
                 {
@@ -43,9 +43,9 @@
         }
     }
 
-
     <div class="leaderboards-container">
-        <div class="leaderboard-section">
+        <!-- Orange Cap Leaderboard -->
+        <div class="leaderboard-section orange-cap">
             <h2>Orange Cap</h2>
             <table>
                 <thead>
@@ -64,7 +64,7 @@
                                 <a href="@player.PlayerProfile" target="_blank">@player.Name</a> &nbsp;
                                 @if (player == topRunScorer)
                                 {
-                                    <img src="https://newhorizonblobstorage.blob.core.windows.net/cricheroesanalytics/OrangeCap.jpeg" alt="Orange Cap" class="cap-icon" />
+                                    <img src="https://newhorizonblobstorage.blob.core.windows.net/cricheroesanalytics/OrangeCap.jpeg" alt="Orange Cap" class="cap-icon" style="max-height:40px; max-width:40px" />
                                 }
                             </td>
                             <td>@player.TotalRuns</td>
@@ -76,7 +76,8 @@
             </table>
         </div>
 
-        <div class="leaderboard-section">
+        <!-- Purple Cap Leaderboard -->
+        <div class="leaderboard-section purple-cap">
             <h2>Purple Cap</h2>
             <table>
                 <thead>
@@ -95,7 +96,7 @@
                                 <a href="@player.PlayerProfile" target="_blank">@player.Name</a> &nbsp;
                                 @if (player == topWicketTaker)
                                 {
-                                    <img src="https://newhorizonblobstorage.blob.core.windows.net/cricheroesanalytics/PurpleCap.jpeg" alt="Purple Cap" class="cap-icon" />
+                                    <img src="https://newhorizonblobstorage.blob.core.windows.net/cricheroesanalytics/PurpleCap.jpeg" alt="Purple Cap" class="cap-icon" style="max-height:40px; max-width:40px" />
                                 }
                             </td>
                             <td>@player.TotalWickets</td>
@@ -107,189 +108,166 @@
             </table>
         </div>
     </div>
-    <div style="text-align: center; margin-top: 20px;">
-        <button @onclick="Refresh" class="btn btn-primary">Refresh Leaderboard</button>
-        <div style="font-size: 0.8em; color: grey; margin-top: 10px;">
+
+    <div class="refresh-section">
+        <button @onclick="Refresh" class="refresh-button">Refresh Leaderboard</button>
+        <div class="last-updated">
             Last updated: @lastUpdateTime.ToString("MMMM dd, yyyy hh:mm tt")
         </div>
     </div>
-    <style>
+</main>
+
+<style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f8f9fa;
+        background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+        color: #343a40;
     }
 
-    .page {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
-
-    .sidebar {
-        width: 250px;
-        background-color: #343a40;
-        color: white;
-        padding: 20px;
-    }
-
-    .sidebar a {
-        color: white;
-        text-decoration: none;
-        display: block;
-        margin-bottom: 10px;
-        font-weight: bold;
+    .page-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 10px;
     }
 
     .header {
         text-align: center;
         margin: 20px 0;
+        background-color: #495057;
+        padding: 20px;
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    .header h1 {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2em;
-        color: #343a40;
-        margin: 0;
-    }
+        .header h1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            margin: 0;
+            font-weight: 600;
+        }
 
     .logo {
-        width: 80px; /* Adjust size as needed */
+        width: 80px;
         height: auto;
         margin-right: 15px;
     }
 
-    main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
     .leaderboards-container {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        max-width: 1300px;
-        background-color: white;
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Two columns for side-by-side layout */
+        gap: 20px;
         padding: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
         border-radius: 8px;
-        box-sizing: border-box;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
     .leaderboard-section {
-        flex: 1;
-        margin-bottom: 15px;
-        text-align: center;
+        width: 100%;
     }
 
-    .leaderboard-section h2 {
-        font-size: 1.5em;
-        margin-bottom: 20px;
-        color: #495057;
-    }
+        .leaderboard-section h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #343a40;
+            font-weight: 600;
+        }
 
-    .leaderboard-section table {
+    table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    .leaderboard-section th, .leaderboard-section td {
+    th, td {
+        text-align: center;
+        padding: 15px;
         border: 1px solid #dee2e6;
-        padding: 12px;
-        text-align: left;
-        white-space: nowrap;
     }
 
-    .leaderboard-section th {
-        background-color: #e9ecef;
-        color: #495057;
+    th {
+        background-color: #343a40;
+        color: white;
+        font-weight: 600;
     }
 
-    .leaderboard-section tr:nth-child(even) {
+    tr:nth-child(even) {
         background-color: #f8f9fa;
     }
 
-    .cap-icon {
-        width: 20px;
-        height: auto;
-        margin-right: 5px;
+    tr:hover {
+        background-color: #e9ecef;
+        cursor: pointer;
     }
 
-    /* Media query for screens with a min-width of 768px (tablets and larger screens) */
-    @@media (min-width: 768px) {
-        .leaderboards-container {
-            flex-direction: row;
-            justify-content: space-between;
-        }
-
-        .leaderboard-section {
-            margin: 0 15px;
-            flex-basis: 48%; /* Allows two tables to fit side by side */
-        }
+    a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
     }
 
-    /* Media query for screens with a max-width of 767px (mobile phones) */
-    @@media (max-width: 767px) {
-        .sidebar {
-            width: 100%;
-            padding: 10px;
+        a:hover {
+            text-decoration: underline;
         }
 
+    .refresh-section {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .refresh-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .refresh-button:hover {
+            background-color: #0056b3;
+        }
+
+    .last-updated {
+        font-size: 0.9em;
+        color: #6c757d;
+        margin-top: 10px;
+    }
+
+    @@media (max-width: 768px) {
         .header h1 {
-            flex-direction: column;
-            font-size: 1.5em;
-        }
-
-        .logo {
-            margin-right: 0;
-            margin-bottom: 10px;
+            font-size: 1.8em;
         }
 
         .leaderboards-container {
+            grid-template-columns: 1fr; /* Stack columns on mobile */
             padding: 10px;
-            box-shadow: none;
         }
 
-        .leaderboard-section h2 {
-            font-size: 1.2em;
-        }
-
-        .leaderboard-section table, .leaderboard-section th, .leaderboard-section td {
+        table {
             font-size: 0.9em;
-            padding: 8px;
         }
 
-        .leaderboard-section table {
+        .refresh-button {
             width: 100%;
-            display: block;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        .leaderboard-section th, .leaderboard-section td {
-            white-space: normal;
-        }
-
-        .leaderboard-section th, .leaderboard-section td {
-            text-align: center;
+            padding: 15px;
         }
     }
 </style>
 
-</main>
-
 @code {
     async void Refresh()
     {
-        //await JS.InvokeVoidAsync("navigateToPage", "/clientRender");
         await matchService.UpdateLatestMatchData();
         lastUpdateTime = await jobExecutionRepository.GetLastSuccessJobTime(Constants.GlobalConstants.CustomUpdateScoreJob);
         this.StateHasChanged();
