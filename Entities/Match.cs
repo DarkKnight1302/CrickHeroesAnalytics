@@ -1,4 +1,5 @@
-﻿using CricHeroesAnalytics.Models.ScoreCardModels;
+﻿using CricHeroesAnalytics.Models;
+using CricHeroesAnalytics.Models.ScoreCardModels;
 using Newtonsoft.Json;
 
 namespace CricHeroesAnalytics.Entities
@@ -14,5 +15,7 @@ namespace CricHeroesAnalytics.Entities
         public List<Batting> Batting { get; set; }
 
         public List<Bowling> Bowling { get; set; }
+
+        public MatchData matchData { get; set; }
     }
 }

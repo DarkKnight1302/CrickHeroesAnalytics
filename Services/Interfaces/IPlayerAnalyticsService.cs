@@ -6,7 +6,7 @@ namespace CricHeroesAnalytics.Services.Interfaces
 {
     public interface IPlayerAnalyticsService
     {
-        public Task UpdatePlayerStatsForMatch(string matchId, List<Scorecard> Scorecard);
+        public Task UpdatePlayerStatsForMatch(string matchId, List<Scorecard> Scorecard, DateTime matchStartTime);
 
         public List<Entities.Player> GetAllPlayers();
 

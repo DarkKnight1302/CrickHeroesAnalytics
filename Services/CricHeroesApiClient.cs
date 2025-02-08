@@ -14,7 +14,7 @@ namespace CricHeroesAnalytics.Services
     {
         private readonly ILogger logger;
         private string buildId;
-        private const string BuildConstant = "kntCVKAlVwHrmO4BdU";
+        private const string BuildConstant = "76g_qHZmcMiNzqsUhmXqh";
         private SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
         public CricHeroesApiClient(ILogger<CricHeroesApiClient> logger)

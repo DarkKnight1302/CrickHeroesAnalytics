@@ -19,23 +19,23 @@ namespace CricHeroesAnalytics.Services
             this._logger = logger;
             this.playerRatingService = playerRatingService;
         }
-        public async Task UpdatePlayerStatsForMatch(string matchId, List<Scorecard> Scorecard)
+        public async Task UpdatePlayerStatsForMatch(string matchId, List<Scorecard> Scorecard, DateTime matchStartTime)
         {
             Scorecard s1 = Scorecard[0];
             Scorecard s2 = Scorecard[1];
 
             if (s1.TeamId == Cult100TeamId)
             {
-                await UpdateBatting(matchId, s1.Batting);
-                await UpdateBowling(matchId, s2.Bowling);
+                await UpdateBatting(matchId, s1.Batting, matchStartTime);
+                await UpdateBowling(matchId, s2.Bowling, matchStartTime);
             } else
             {
-                await UpdateBatting(matchId, s2.Batting);
-                await UpdateBowling(matchId, s1.Bowling);
+                await UpdateBatting(matchId, s2.Batting, matchStartTime);
+                await UpdateBowling(matchId, s1.Bowling, matchStartTime);
             }
         }
 
-        private async Task UpdateBatting(string matchId, List<Batting> batting)
+        private async Task UpdateBatting(string matchId, List<Batting> batting, DateTime matchStarted)
         {
             foreach(Batting battingStats in batting)
             {
@@ -61,6 +61,7 @@ namespace CricHeroesAnalytics.Services
                 playerRunsPerMatch.WasNotOut = GlobalConstants.NotOutList.Contains(battingStats.HowToOut);
                 player.PlayerRunMatchMap[matchId] = playerRunsPerMatch;
                 UpdateTotalRuns(player);
+                player.LastMatchUpdated = matchStarted;
                 await this._playerRepository.CreateOrUpdatePlayer(player);
             }
         }
@@ -112,7 +113,7 @@ namespace CricHeroesAnalytics.Services
             }
         }
 
-        private async Task UpdateBowling(string matchId, List<Bowling> bowling)
+        private async Task UpdateBowling(string matchId, List<Bowling> bowling, DateTime matchStartTime)
         {
             foreach (Bowling bowlingStats in bowling)
             {
@@ -136,6 +137,7 @@ namespace CricHeroesAnalytics.Services
                 playerWicketsPerMatch.Overs = bowlingStats.Overs;
                 player.PlayerWicketsMatchMap[matchId] = playerWicketsPerMatch;
                 UpdateTotalWickets(player);
+                player.LastMatchUpdated = matchStartTime;
                 await this._playerRepository.CreateOrUpdatePlayer(player);
             }
         }

@@ -66,10 +66,13 @@ namespace CricHeroesAnalytics.Services
                         _logger.LogInformation($"ScoreCard Not Found {matchIdString}");
                         break;
                     }
-                    await this._playerAnalyticsService.UpdatePlayerStatsForMatch(matchIdString, scoreCardResponse.PageProps.Scorecard);
+
+                    await this._playerAnalyticsService.UpdatePlayerStatsForMatch(matchIdString, scoreCardResponse.PageProps.Scorecard, data.MatchStartTime);
+
                     Match match = new Match();
                     match.MatchId = matchIdString;
                     match.Id = matchIdString;
+                    match.matchData = data;
                     if (scoreCardResponse.PageProps.Scorecard[0].TeamId == Cult100TeamId)
                     {
                         match.Batting = scoreCardResponse.PageProps.Scorecard[0].Batting;
@@ -105,6 +108,66 @@ namespace CricHeroesAnalytics.Services
         {
             return b.MatchStartTime.CompareTo(a.MatchStartTime);
         }
+
+        /*private async Task UpdateMatchData(List<MatchData> matchData)
+        {
+            List<Match> storedMatches = await this._matchRepository.GetAllMatches();
+            foreach(Match match in storedMatches)
+            {
+                if (match.matchData != null)
+                {
+                    ScoreCardResponse res = await this.cricHeroesApiClient.GetScoreCard(match.matchData);
+                    Scorecard s1 = res.PageProps.Scorecard[0];
+                    Scorecard s2 = res.PageProps.Scorecard[1];
+                    if (s1.TeamId == 5455774)
+                    {
+                        foreach(var batting in s1.Batting)
+                        {
+                            int playerId = batting.PlayerId;
+                            Entities.Player p = await this.playerRepository.GetPlayer(playerId.ToString());
+                            if (match.matchData.MatchStartTime > p.LastMatchUpdated)
+                            {
+                                p.LastMatchUpdated = match.matchData.MatchStartTime;
+                                await this.playerRepository.CreateOrUpdatePlayer(p);
+                            }
+                        }
+                        foreach (var batting in s2.Bowling)
+                        {
+                            int playerId = batting.PlayerId;
+                            Entities.Player p = await this.playerRepository.GetPlayer(playerId.ToString());
+                            if (match.matchData.MatchStartTime > p.LastMatchUpdated)
+                            {
+                                p.LastMatchUpdated = match.matchData.MatchStartTime;
+                                await this.playerRepository.CreateOrUpdatePlayer(p);
+                            }
+                        }
+                    }
+                    if (s2.TeamId == 5455774)
+                    {
+                        foreach (var batting in s2.Batting)
+                        {
+                            int playerId = batting.PlayerId;
+                            Entities.Player p = await this.playerRepository.GetPlayer(playerId.ToString());
+                            if (match.matchData.MatchStartTime > p.LastMatchUpdated)
+                            {
+                                p.LastMatchUpdated = match.matchData.MatchStartTime;
+                                await this.playerRepository.CreateOrUpdatePlayer(p);
+                            }
+                        }
+                        foreach (var batting in s1.Bowling)
+                        {
+                            int playerId = batting.PlayerId;
+                            Entities.Player p = await this.playerRepository.GetPlayer(playerId.ToString());
+                            if (match.matchData.MatchStartTime > p.LastMatchUpdated)
+                            {
+                                p.LastMatchUpdated = match.matchData.MatchStartTime;
+                                await this.playerRepository.CreateOrUpdatePlayer(p);
+                            }
+                        }
+                    }
+                }    
+            }
+        }*/
     }
 
 }
