@@ -23,7 +23,7 @@ namespace CricHeroesAnalytics.Services
         {
             DateTimeOffset currentDateTime = DateTimeOffset.UtcNow.ToIndiaTime();
             await CleanUp(currentDateTime);
-            for (int i = 4; i < 30; i++)
+            for (int i = 4; i < 26; i++)
             {
                 DateTimeOffset futureDate = currentDateTime.AddDays(i);
                 if (futureDate.DayOfWeek == DayOfWeek.Saturday)
@@ -51,7 +51,7 @@ namespace CricHeroesAnalytics.Services
                             bool isMorningSlotAvailable = false;
                             foreach (var slotData in groundSlots.Data)
                             {
-                                if (slotData != null && !slotData.IsBooked && slotData.Rate <= 8500)
+                                if (slotData != null && !slotData.IsBooked && slotData.Rate <= 14000)
                                 {
                                     groundAvailable = true;
                                 }
