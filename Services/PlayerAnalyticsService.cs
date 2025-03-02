@@ -243,7 +243,7 @@ namespace CricHeroesAnalytics.Services
             List<Entities.Player> allRounders = new List<Entities.Player>();
             foreach(var player in players)
             {
-                if (player.OversBowled >= 10 && player.BattingAverage >= 10 &&  player.LastMatchUpdated > DateTime.Now.AddDays(-30)&& player.BowlingEconomy <= 9D)
+                if (player.OversBowled >= 10 && player.BattingAverage >= 10 &&  player.LastMatchUpdated > DateTime.Now.AddDays(-30) && player.BowlingEconomy <= 9D)
                 {
                     allRounders.Add(player);
                 }
