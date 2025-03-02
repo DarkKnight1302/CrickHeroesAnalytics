@@ -144,12 +144,14 @@ namespace CricHeroesAnalytics.Services
 
         public List<Entities.Player> GetAllPlayers()
         {
-            return this._playerRepository.GetAllPlayers();
+            var allPlayers = this._playerRepository.GetAllPlayers();
+            return this.GetActivePlayers(allPlayers);
         }
 
         public async Task<List<Entities.Player>> GetAllPlayersAsync()
         {
-            return await this._playerRepository.GetAllPlayersAsync();
+            var allPlayers = await this._playerRepository.GetAllPlayersAsync();
+            return this.GetActivePlayers(allPlayers);
         }
 
         public List<Entities.Player> GetAllRounderLeaderboard()
@@ -223,12 +225,25 @@ namespace CricHeroesAnalytics.Services
 
         }
 
+        private List<Entities.Player> GetActivePlayers(List<Entities.Player> players)
+        {
+            List<Entities.Player> activePlayers = new List<Entities.Player>();
+            foreach(var player in players)
+            {
+                if (player.LastMatchUpdated > DateTime.Now.AddDays(-60))
+                {
+                    activePlayers.Add(player);
+                }
+            }
+            return activePlayers;
+        }
+
         private List<Entities.Player> GetAllRounderApplicablePlayers(List<Entities.Player> players)
         {
             List<Entities.Player> allRounders = new List<Entities.Player>();
             foreach(var player in players)
             {
-                if (player.OversBowled >= 10 && player.BattingAverage >= 10 && player.LastMatchUpdated > DateTime.Now.AddDays(-30) && player.BowlingEconomy <= 9D)
+                if (player.OversBowled >= 10 && player.BattingAverage >= 10 &&  player.LastMatchUpdated > DateTime.Now.AddDays(-30)&& player.BowlingEconomy <= 9D)
                 {
                     allRounders.Add(player);
                 }
