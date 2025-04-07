@@ -3,6 +3,7 @@ using CricHeroesAnalytics.Entities;
 using CricHeroesAnalytics.Models.ScoreCardModels;
 using CricHeroesAnalytics.Repositories;
 using CricHeroesAnalytics.Services.Interfaces;
+using OpenQA.Selenium.Internal;
 
 namespace CricHeroesAnalytics.Services
 {
@@ -249,6 +250,64 @@ namespace CricHeroesAnalytics.Services
                 }
             }
             return allRounders;
+        }
+
+        public List<Entities.Player> GetBattersByRank()
+        {
+            List<Entities.Player> allPlayers = GetAllPlayers();
+            var validBatters = allPlayers.Where(IsValidBatter).ToList();
+            List<Entities.Player> battingRanked = new List<Entities.Player>(validBatters);
+            battingRanked.Sort((a, b) =>
+            {
+                double a1 = this.playerRatingService.GetBattingRating(a);
+                double b1 = this.playerRatingService.GetBattingRating(b);
+
+                return b1.CompareTo(a1);
+            });
+
+            return battingRanked;
+        }
+        
+        private bool IsValidBatter(Entities.Player player)
+        {
+            if (player.LastMatchUpdated < DateTime.UtcNow.AddDays(-30))
+            {
+                return false;
+            }
+            if (player.BattingAverage < 10D || player.StrikeRate < 90 || player.MatchesPlayed < 5)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool IsValidBowler(Entities.Player player)
+        {
+            if (player.LastMatchUpdated < DateTime.UtcNow.AddDays(-30))
+            {
+                return false;
+            }
+            if (player.BowlingEconomy > 9D || player.TotalWickets < 3)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public List<Entities.Player> GetBowlersByRank()
+        {
+            List<Entities.Player> allPlayers = GetAllPlayers();
+            var validBowlers = allPlayers.Where(IsValidBowler).ToList();
+            List<Entities.Player> bowlingRanked = new List<Entities.Player>(validBowlers);
+            bowlingRanked.Sort((a, b) =>
+            {
+                double a1 = this.playerRatingService.GetBowlingRating(a);
+                double b1 = this.playerRatingService.GetBowlingRating(b);
+
+                return b1.CompareTo(a1);
+            });
+
+            return bowlingRanked;
         }
     }
 }
