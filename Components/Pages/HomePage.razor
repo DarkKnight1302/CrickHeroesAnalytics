@@ -7,6 +7,7 @@
 @inject IPlayerAnalyticsService playerService
 @inject IMatchAnalyticService matchService
 @inject IJobExecutionRepository jobExecutionRepository
+@inject IPlayerStatService playerStatService
 @inherits LayoutComponentBase
 @layout MainLayout
 @inject IJSRuntime JS
@@ -25,22 +26,65 @@
         private Player topWicketTaker;
         private DateTimeOffset lastUpdateTime = DateTimeOffset.MinValue;
 
+        // Store last 5 innings stats for each player
+        private Dictionary<string, (double avg, int sr)> last5BattingStats = new();
+        private Dictionary<string, double> last5BowlingStats = new();
+
         protected override async Task OnInitializedAsync()
         {
             players = await playerService.GetAllPlayersAsync();
+
             foreach (var p in players)
             {
+                // Bowling average calculation (existing)
                 if (p.TotalWickets > 0)
                 {
                     double bowlingAverage = ((double)p.RunsGiven / (double)p.TotalWickets);
                     p.BowlingAverage = Math.Round(bowlingAverage, 1);
                 }
+
+                // Batting stats for last 5 innings
+                double last5Avg = playerStatService.GetAverageFromLastNInnings(p, 5);
+                int last5SR = playerStatService.GetStrikeRateFromLastNInnings(p, 5);
+                last5BattingStats[p.Id] = (last5Avg, last5SR);
+
+                // Bowling economy for last 5 innings
+                double last5Eco = playerStatService.GetEconomyFromLastNInnings(p, 5);
+                last5BowlingStats[p.Id] = last5Eco;
             }
+
             topRunScorer = players.OrderByDescending(p => p.TotalRuns).FirstOrDefault();
             topWicketTaker = players.OrderByDescending(p => p.TotalWickets).FirstOrDefault();
             lastUpdateTime = await jobExecutionRepository.GetLastSuccessJobTime(Constants.GlobalConstants.CustomUpdateScoreJob);
             this.StateHasChanged();
         }
+
+        private MarkupString GetStatWithArrow(double overall, double last5, bool isHigherBetter = true)
+        {
+            const string arrowStyle = "font-family: 'Consolas', 'Courier New', monospace; font-size: 0.95em; vertical-align: -0.15em; line-height: 1; display: inline-block;";
+            const string dotStyle = "color:gray; font-size: 1em; vertical-align: -0.15em; display: inline-block;";
+
+            if (last5 == 0)
+                return new MarkupString($"{overall}");
+
+            if ((isHigherBetter && last5 > overall) || (!isHigherBetter && last5 < overall))
+            {
+                // Green up arrow (˄, more obtuse)
+                return new MarkupString($@"<span style=""color:green;{arrowStyle}"">&#708;</span> {overall}");
+            }
+            else if ((isHigherBetter && last5 < overall) || (!isHigherBetter && last5 > overall))
+            {
+                // Red down arrow (˅, more obtuse)
+                return new MarkupString($@"<span style=""color:red;{arrowStyle}"">&#709;</span> {overall}");
+            }
+            else
+            {
+                // Gray dot for no change
+                return new MarkupString($@"<span style=""{dotStyle}"">&#8226;</span> {overall}");
+            }
+        }
+
+
     }
 
     <div class="leaderboards-container">
@@ -59,6 +103,7 @@
                 <tbody>
                     @foreach (var player in players?.OrderByDescending(p => p.TotalRuns))
                     {
+                        var last5 = last5BattingStats.TryGetValue(player.Id, out var stats) ? stats : (0d, 0);
                         <tr>
                             <td>
                                 <a href="@player.PlayerProfile" target="_blank">@player.Name</a> &nbsp;
@@ -68,8 +113,12 @@
                                 }
                             </td>
                             <td>@player.TotalRuns</td>
-                            <td>@player.StrikeRate</td>
-                            <td>@player.BattingAverage</td>
+                            <td>
+                                @GetStatWithArrow(player.StrikeRate, last5.Item2, true)
+                            </td>
+                            <td>
+                                @GetStatWithArrow(player.BattingAverage, last5.Item1, true)
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -101,7 +150,9 @@
                             </td>
                             <td>@player.TotalWickets</td>
                             <td>@player.BowlingAverage</td>
-                            <td>@player.BowlingEconomy</td>
+                            <td>
+                                @GetStatWithArrow(player.BowlingEconomy, last5BowlingStats.TryGetValue(player.Id, out var last5Eco) ? last5Eco : 0, false)
+                            </td>
                         </tr>
                     }
                 </tbody>

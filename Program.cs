@@ -23,6 +23,7 @@ builder.Services.AddSingleton<IGroundSlotRepository, GroundSlotRepository>();
 builder.Services.AddSingleton<IGwGroundAnalyticsService, GwGroundAnalyticsService>();
 builder.Services.AddSingleton<IGWSportsApiClient, GWSportsApiClient>();
 builder.Services.AddSingleton<IPlayerRatingService, PlayerRatingService>();
+builder.Services.AddSingleton<IPlayerStatService, PlayerStatService>();
 builder.Services.AddHttpClient();
 builder.Services.AddQuartz(q =>
 {

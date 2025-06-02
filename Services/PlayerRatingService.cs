@@ -7,7 +7,7 @@ namespace CricHeroesAnalytics.Services
     {
         public double GetBattingRating(Player player)
         {
-            return player.BattingAverage * (double)player.StrikeRate;
+            return player.BattingAverage * (double)player.StrikeRate * (double)player.StrikeRate;
         }
 
         public double GetBowlingRating(Player player)
