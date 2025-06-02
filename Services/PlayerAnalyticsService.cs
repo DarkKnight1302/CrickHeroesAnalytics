@@ -309,5 +309,26 @@ namespace CricHeroesAnalytics.Services
 
             return bowlingRanked;
         }
+
+        public List<Entities.Player> GetSuperStrikerLeaderboard()
+        {
+            var allPlayers = GetAllPlayers();
+            allPlayers = GetPlayersEligibleForSuperStiker(allPlayers);
+            allPlayers.Sort((a, b) => b.StrikeRate.CompareTo(a.StrikeRate));
+            return allPlayers;
+        }
+        
+        private List<Entities.Player> GetPlayersEligibleForSuperStiker(List<Entities.Player> players)
+        {
+            var eligiblePlayers = new List<Entities.Player>();
+            foreach(var player in players)
+            {
+                if (player.LastMatchUpdated > DateTime.Now.AddDays(-60) && player.BattingAverage > 10D && player.PlayerRunMatchMap.Count > 10 && player.StrikeRate >= 120)
+                {
+                    eligiblePlayers.Add(player);
+                }
+            }
+            return eligiblePlayers;
+        }
     }
 }

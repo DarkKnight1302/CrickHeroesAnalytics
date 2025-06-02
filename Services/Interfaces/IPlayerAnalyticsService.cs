@@ -12,6 +12,8 @@ namespace CricHeroesAnalytics.Services.Interfaces
 
         public List<Entities.Player> GetAllRounderLeaderboard();
 
+        public List<Entities.Player> GetSuperStrikerLeaderboard();
+
         public List<Entities.Player> GetBattersByRank();
 
         public List<Entities.Player> GetBowlersByRank();
