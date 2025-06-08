@@ -7,7 +7,6 @@
             { "srrc1", 6 },
             { "srrc2", 6 },
             { "nithm-cricket-ground", 7 },
-            { "urban-technology-farms-pt-ltd", 9 }, // 9km
             { "vbcc-1-vattinagulapally", 9 }, // 9km
             { "playsfit-cricket-ground-vattinagulapally", 10 }, // 9.5 km
             { "swaroop-cricket-ground-kokapet", 11 }, // 11 km
@@ -25,7 +24,6 @@
             { "gurukul-ground-moinabad", 20 }, // 20km
             { "msdian", 20},
             { "genx1", 21 },
-            { "onechampion1-cricket-grounds", 21 }, //21 km
             { "azpro-cricket-ground", 21 }, // 21km
             { "scg-cricket-ground", 22 }, // 22 km
             { "brindaground-3", 22 }, // 22 km
@@ -47,7 +45,7 @@
             { "sukruth-cricket-ground", 27 }, // 27 km
             { "hitman-azhit-cricket-ground", 27 }, // 27 km
             { "rao's-cricket-ground", 27 }, // 27km
-            { "msk-cricket-ground-vattinagulapally", 14 }, // 14 km
+            { "msk-cricket-ground-vattinagulapally", 40 }, // 14 km
             { "vvr2-cricket-ground", 22 }, //22km
             { "kandalas", 29 },
             { "soni-cricket-ground-@jatt-xi", 30 },
@@ -67,7 +65,9 @@
             { "hummingbird-cricket-stadium", 33},
             { "apr-cricket-ground", 34 },
             { "cbr-cricket-ground", 34 },
-            { "pvr-ground-tukuguda", 36 }
+            { "pvr-ground-tukuguda", 36 },
+            { "urban-technology-farms-pt-ltd", 40 }, // 9km
+            { "onechampion1-cricket-grounds", 40 }, //21 km
         };
     }
 }
