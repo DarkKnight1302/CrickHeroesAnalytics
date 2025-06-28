@@ -15,7 +15,7 @@
             { "the-pavilion-cricket-stadium", 14 }, // 14 km
             { "vscg-cricket-ground", 14 }, // 14 km
             { "thrill-cricket-ground-1-appa-junction", 15 }, // 15 km
-            { "thrill-cricket-ground-2-appa-junction", 15},
+            { "thrill-cricket-ground-2-appa-junction", 40},
             { "pmr-grounds1", 19 },
             { "pmr-grounds", 19 },
             { "am-cricket-ground", 19 }, // 19 km

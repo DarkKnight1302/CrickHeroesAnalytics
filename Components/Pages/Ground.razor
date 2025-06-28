@@ -9,54 +9,97 @@
 
 <div class="header-container">
     <h2>Available Cricket Grounds</h2>
-    <button class="refresh-button" @onclick="RefreshData">Refresh Data</button>
+    
+    <button class="refresh-button" @onclick="RefreshData" disabled="@isLoading">
+        @if (isLoading)
+        {
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Refreshing...</span>
+        }
+        else
+        {
+            <span>Refresh Data</span>
+        }
+    </button>
 </div>
 
-<div class="ground-list-container">
-    <div class="ground-list">
-        @foreach (var ground in grounds?.OrderBy(x => x.DistanceInKm) ?? Enumerable.Empty<GroundSlot>())
-        {
-            <div class="ground-item @(ground.IsMorningSlotAvailable ? "morning-slot" : "")">
-                <div class="ground-details">
-                    <h3>@ground.ground</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> Distance: @ground.DistanceInKm km</p>
-                    <p><i class="fas fa-calendar-alt"></i> Available Dates:</p>
-                    <ul>
-                        @foreach (var date in ground.AvailableDates)
-                        {
-                            <li>@date.ToString("dd MMM yyyy")</li>
-                        }
-                    </ul>
-                    @if (ground.IsMorningSlotAvailable)
-                    {
-                        <p class="morning-slot-text"><i class="fas fa-sun"></i> Morning Slot Available</p>
-                    }
-                </div>
-                <div class="ground-link">
-                    <a href="@ground.GroundUrl" target="_blank">View Ground</a>
-                </div>
-            </div>
-        }
+@if (grounds == null)
+{
+    <div class="loading-indicator">
+        <i class="fas fa-spinner fa-spin"></i> Loading available grounds...
     </div>
-</div>
+}
+else
+{
+    <div class="ground-list-container">
+        <div class="ground-list">
+            @foreach (var ground in grounds?.OrderBy(x => x.DistanceInKm) ?? Enumerable.Empty<GroundSlot>())
+            {
+                <div class="ground-item @(ground.IsMorningSlotAvailable ? "morning-slot" : "")">
+                    <div class="ground-details">
+                        <h3>@ground.ground</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> Distance: @ground.DistanceInKm km</p>
+                        <p><i class="fas fa-calendar-alt"></i> Available Dates:</p>
+                        <ul>
+                            @foreach (var date in ground.AvailableDates)
+                            {
+                                <li>@date.ToString("dd MMM yyyy")</li>
+                            }
+                        </ul>
+                        @if (ground.IsMorningSlotAvailable)
+                        {
+                            <p class="morning-slot-text"><i class="fas fa-sun"></i> Morning Slot Available</p>
+                        }
+                    </div>
+                    <div class="ground-link">
+                        <a href="@ground.GroundUrl" target="_blank">View Ground</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
 
 @code {
     private IEnumerable<GroundSlot> grounds;
+    
+    // New boolean flag to track the loading state
+    private bool isLoading = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        LoadGrounds();
+        // Use OnInitializedAsync for async operations on initialization
+        await LoadGroundsAsync();
     }
 
-    private void LoadGrounds()
+    private async Task LoadGroundsAsync()
     {
+        // Simulate a small delay for initial loading if needed, otherwise just load
         grounds = GroundSlotRepository.GetAllAvailableGroundSlots();
+        await InvokeAsync(StateHasChanged);
     }
-
-    public async void RefreshData()
+    
+    // Updated RefreshData method to handle loading state
+    public async Task RefreshData()
     {
-        await this.gwGroundAnalyticsService.UpdateGroundSlots();
-        this.StateHasChanged();
+        isLoading = true;
+        // StateHasChanged() is called to immediately re-render the component with the loading indicator
+        StateHasChanged(); 
+
+        try
+        {
+            await this.gwGroundAnalyticsService.UpdateGroundSlots();
+            // After updating, reload the grounds data to reflect changes
+            this.LoadGroundsAsync();
+        }
+        finally
+        {
+            // This ensures the loading indicator is hidden even if an error occurs
+            isLoading = false;
+            // Call StateHasChanged() again to update the UI with the new data and hide the loader
+            this.StateHasChanged();
+        }
     }
 }
 
@@ -86,11 +129,26 @@
         font-size: 16px;
         margin-top: 10px;
         transition: background-color 0.3s ease;
+        display: inline-flex; /* Helps align icon and text */
+        align-items: center;  /* Helps align icon and text */
     }
 
         .refresh-button:hover {
             background-color: #45a049;
         }
+
+        /* Style for the button when it's disabled */
+        .refresh-button:disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+        }
+    
+    /* Align spinner icon with text */
+    .refresh-button .fa-spinner {
+        margin-right: 8px;
+    }
+
     /* Header Design */
     .header-container {
         background-color: #007bff;
@@ -112,6 +170,18 @@
         display: flex;
         justify-content: center;
         padding: 20px;
+    }
+    
+    /* Loading indicator style */
+    .loading-indicator {
+        text-align: center;
+        padding: 40px;
+        font-size: 1.2em;
+        color: #555;
+    }
+
+    .loading-indicator .fa-spinner {
+        margin-right: 10px;
     }
 
     .ground-list {

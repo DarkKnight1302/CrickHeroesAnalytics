@@ -12,6 +12,7 @@ namespace CricHeroesAnalytics.Services
         private readonly ILogger _logger;
         private readonly IGWSportsApiClient gWSportsApiClient;
         private readonly IGroundSlotRepository groundSlotRepository;
+        private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
         public GwGroundAnalyticsService(ILogger<IGwGroundAnalyticsService> logger, IGroundSlotRepository groundSlotRepository, IGWSportsApiClient gWSportsApiClient)
         {
@@ -21,76 +22,83 @@ namespace CricHeroesAnalytics.Services
         }
         public async Task UpdateGroundSlots()
         {
-            DateTimeOffset currentDateTime = DateTimeOffset.UtcNow.ToIndiaTime();
-            await CleanUp(currentDateTime);
-            for (int i = 4; i < 30; i++)
+            await semaphoreSlim.WaitAsync();
+            try
             {
-                DateTimeOffset futureDate = currentDateTime.AddDays(i);
-                if (futureDate.DayOfWeek == DayOfWeek.Saturday)
+                DateTimeOffset currentDateTime = DateTimeOffset.UtcNow.ToIndiaTime();
+                await CleanUp(currentDateTime);
+                for (int i = 4; i < 30; i++)
                 {
-                    Dictionary<string, int> grounds = GroundList.grounds;
-                    List<Task<(GroundSlots, string groundName)>> tasks = new List<Task<(GroundSlots, string groundName)>>();
-                    foreach (var ground in grounds)
+                    DateTimeOffset futureDate = currentDateTime.AddDays(i);
+                    if (futureDate.DayOfWeek == DayOfWeek.Saturday)
                     {
-                        tasks.Add(Task.Run(() =>
+                        Dictionary<string, int> grounds = GroundList.grounds;
+                        List<Task<(GroundSlots, string groundName)>> tasks = new List<Task<(GroundSlots, string groundName)>>();
+                        foreach (var ground in grounds)
                         {
-                            return GetLatestSlots(ground.Key, futureDate);
-                        }));
-                    }
-                    await Task.WhenAll(tasks);
-                    foreach (var task in tasks)
-                    {
-                        (GroundSlots groundSlots, string groundName) = task.Result;
-                        if (groundSlots == null || !groundSlots.Status.Equals("success"))
-                        {
-                            this._logger.LogError($"No slots found for ground {groundName}");
+                            tasks.Add(Task.Run(() =>
+                            {
+                                return GetLatestSlots(ground.Key, futureDate);
+                            }));
                         }
-                        if (groundSlots != null && groundSlots.Status.Equals("success") && groundSlots.Data != null)
+                        await Task.WhenAll(tasks);
+                        foreach (var task in tasks)
                         {
-                            bool groundAvailable = false;
-                            bool isMorningSlotAvailable = false;
-                            foreach (var slotData in groundSlots.Data)
+                            (GroundSlots groundSlots, string groundName) = task.Result;
+                            if (groundSlots == null || !groundSlots.Status.Equals("success"))
                             {
-                                if (slotData != null && !slotData.IsBooked && slotData.Rate <= 14000 && slotData.SlotTimeHalf < 600 && slotData.SlotTimeHalf > 300)
-                                {
-                                    groundAvailable = true;
-                                }
-                                if (slotData != null && slotData.SlotTimeHalf < 500 && slotData.SlotTimeHalf > 400 && !slotData.IsBooked)
-                                {
-                                    isMorningSlotAvailable = true;
-                                }
+                                this._logger.LogError($"No slots found for ground {groundName}");
                             }
+                            if (groundSlots != null && groundSlots.Status.Equals("success") && groundSlots.Data != null)
+                            {
+                                bool groundAvailable = false;
+                                bool isMorningSlotAvailable = false;
+                                foreach (var slotData in groundSlots.Data)
+                                {
+                                    if (slotData != null && !slotData.IsBooked && slotData.Rate <= 14000 && slotData.SlotTimeHalf < 600 && slotData.SlotTimeHalf > 300)
+                                    {
+                                        groundAvailable = true;
+                                    }
+                                    if (slotData != null && slotData.SlotTimeHalf < 500 && slotData.SlotTimeHalf > 400 && !slotData.IsBooked)
+                                    {
+                                        isMorningSlotAvailable = true;
+                                    }
+                                }
 
-                            GroundSlot dbSlot = await groundSlotRepository.GetGroundSlotAsync(groundName);
-                            if (dbSlot == null)
-                            {
-                                dbSlot = new GroundSlot()
+                                GroundSlot dbSlot = await groundSlotRepository.GetGroundSlotAsync(groundName);
+                                if (dbSlot == null)
                                 {
-                                    Id = groundName,
-                                    ground = groundName,
-                                    GroundUrl = $"https://www.gwsportsapp.in/hyderabad/cricket/booking-sports-online-venue/{groundName}",
-                                    DistanceInKm = GroundList.grounds[groundName],
-                                    IsAvailable = groundAvailable,
-                                };
-                            }
-                            if (groundAvailable)
-                            {
-                                if (!dbSlot.AvailableDates.Contains(futureDate.Date))
-                                {
-                                    dbSlot.AvailableDates.Add(futureDate.Date);
-                                    dbSlot.IsAvailable = true;
+                                    dbSlot = new GroundSlot()
+                                    {
+                                        Id = groundName,
+                                        ground = groundName,
+                                        GroundUrl = $"https://www.gwsportsapp.in/hyderabad/cricket/booking-sports-online-venue/{groundName}",
+                                        DistanceInKm = GroundList.grounds[groundName],
+                                        IsAvailable = groundAvailable,
+                                    };
                                 }
-                                dbSlot.IsMorningSlotAvailable = isMorningSlotAvailable;
+                                if (groundAvailable)
+                                {
+                                    if (!dbSlot.AvailableDates.Contains(futureDate.Date))
+                                    {
+                                        dbSlot.AvailableDates.Add(futureDate.Date);
+                                        dbSlot.IsAvailable = true;
+                                    }
+                                    dbSlot.IsMorningSlotAvailable = isMorningSlotAvailable;
+                                }
+                                else
+                                {
+                                    dbSlot.AvailableDates.Remove(futureDate.Date);
+                                    dbSlot.IsAvailable = dbSlot.AvailableDates.Count > 0;
+                                }
+                                await groundSlotRepository.UpdateGroundSlot(dbSlot);
                             }
-                            else
-                            {
-                                dbSlot.AvailableDates.Remove(futureDate.Date);
-                                dbSlot.IsAvailable = dbSlot.AvailableDates.Count > 0;
-                            }
-                            await groundSlotRepository.UpdateGroundSlot(dbSlot);
                         }
                     }
                 }
+            } finally
+            {
+                this.semaphoreSlim.Release();
             }
         }
 
