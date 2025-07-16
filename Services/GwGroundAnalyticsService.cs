@@ -77,6 +77,9 @@ namespace CricHeroesAnalytics.Services
                                         IsAvailable = groundAvailable,
                                     };
                                 }
+
+                                dbSlot.DistanceInKm = GroundList.grounds[groundName];
+
                                 if (groundAvailable)
                                 {
                                     if (!dbSlot.AvailableDates.Contains(futureDate.Date))

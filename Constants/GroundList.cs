@@ -13,7 +13,6 @@
             { "primearena", 12 },
             { "samruddhi-cricket-ground", 12 }, //12 km
             { "the-pavilion-cricket-stadium", 14 }, // 14 km
-            { "vscg-cricket-ground", 14 }, // 14 km
             { "thrill-cricket-ground-1-appa-junction", 15 }, // 15 km
             { "thrill-cricket-ground-2-appa-junction", 40},
             { "pmr-grounds1", 19 },
