@@ -23,8 +23,10 @@
             { "abhiram-cricket-county-donthanpalli-shankarpally", 20 }, // 20 km
             { "gurukul-ground-moinabad", 20 }, // 20km
             { "msdian", 20},
+            { "pearl-one-cricket-ground", 21},
             { "genx1", 21 },
             { "azpro-cricket-ground", 21 }, // 21km
+            { "vijayalaxmi-cricket-ground", 22},
             { "scg-cricket-ground", 22 }, // 22 km
             { "brindaground-3", 22 }, // 22 km
             { "brindaground-1", 22 }, // 22 km
@@ -42,13 +44,14 @@
             { "s.a.r-cricket-arena--ground---1", 25 }, // 25 km
             { "olympus-cricket-ground", 25 }, // 25 km
             { "warriors-ground", 27 },
-            { "sukruth-cricket-ground", 27 }, // 27 km
+            { "sukruth-cricket-ground", 30 }, // 27 km
             { "hitman-azhit-cricket-ground", 27 }, // 27 km
             { "rao's-cricket-ground", 27 }, // 27km
             { "msk-cricket-ground-vattinagulapally", 40 }, // 14 km
             { "vvr2-cricket-ground", 22 }, //22km
             { "kandalas", 29 },
             { "soni-cricket-ground-@jatt-xi", 30 },
+            { "sadasiva-cricket-club-(scc)", 30},
             { "rhb-cricket-ground", 30 },
             { "reet-cricket-club", 30 }, // 30 km
             { "dcc-sports-arena", 10 }, // 9.5 km
