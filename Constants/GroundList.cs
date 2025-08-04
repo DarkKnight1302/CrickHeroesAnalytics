@@ -48,7 +48,7 @@
             { "soni-cricket-ground-@jatt-xi", 30 },
             { "sadasiva-cricket-club-(scc)", 30},
             { "reet-cricket-club", 30 }, // 30 km
-            { "albatross-cricket-ground", 30 }, // 30 km
+            { "albatross-cricket-ground", 33 }, // 30 km
             { "smr-cricket-ground", 30 }, //30 km
             { "golconda-cricket-club", 30 }, // 30 km
             { "kdr-ground-2", 31},
