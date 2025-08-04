@@ -55,7 +55,7 @@ namespace CricHeroesAnalytics.Services
                                 bool isMorningSlotAvailable = false;
                                 foreach (var slotData in groundSlots.Data)
                                 {
-                                    if (slotData != null && !slotData.IsBooked && slotData.Rate <= 14000 && slotData.SlotTimeHalf < 600 && slotData.SlotTimeHalf > 300)
+                                    if (slotData != null && !slotData.IsBooked && slotData.Rate <= 14000 && slotData.SlotTimeHalf <= 700 && slotData.SlotTimeHalf > 300)
                                     {
                                         groundAvailable = true;
                                     }
