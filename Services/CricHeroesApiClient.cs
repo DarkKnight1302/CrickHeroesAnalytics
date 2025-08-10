@@ -219,7 +219,7 @@ namespace CricHeroesAnalytics.Services
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"An error occurred while fetching profile {profileId}: {ex.Message}");
-                return "/images/Final_Cult11.png";
+                return "https://media.cricheroes.in/default/user_profile.png";
             }
         }
 
