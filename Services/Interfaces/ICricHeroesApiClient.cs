@@ -14,5 +14,7 @@ namespace CricHeroesAnalytics.Services.Interfaces
         public void UpdateBuildId(string buildId);
 
         public Task<string?> GetProfilePictureUrlAsync(string playerId);
+
+        public void ResetCache();
     }
 }

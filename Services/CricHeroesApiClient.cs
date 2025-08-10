@@ -28,6 +28,7 @@ namespace CricHeroesAnalytics.Services
             buildId = BuildConstant;
             this.logger = logger;
         }
+
         public async Task<List<MatchData>> GetMatches()
         {
             this.logger.LogInformation("Request to fetch matches");
@@ -250,6 +251,11 @@ namespace CricHeroesAnalytics.Services
             }
 
             return null;
+        }
+
+        public void ResetCache()
+        {
+            _profileUrlCache.Clear();
         }
     }
 }
