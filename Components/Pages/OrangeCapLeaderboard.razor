@@ -8,6 +8,7 @@
 @inject IMatchAnalyticService matchService
 @inject IJobExecutionRepository jobExecutionRepository
 @inject IPlayerStatService playerStatService
+@inject ICricHeroesApiClient cricHeroesApiClient
 @inherits LayoutComponentBase
 @layout MainLayout
 @inject IJSRuntime JS
@@ -49,7 +50,7 @@
                                 </a>
                                 @if (player == topRunScorer)
                                 {
-                                    <img src="https://newhorizonblobstorage.blob.core.windows.net/cricheroesanalytics/OrangeCap.jpeg" alt="Orange Cap" class="cap-icon" />
+                                    <img src="/images/OrangeCap.png" alt="Orange Cap" class="cap-icon" />
                                 }
                             </td>
                             <td class="stat-runs">@player.TotalRuns</td>
@@ -84,261 +85,261 @@
 
 <style>
     :root {
-        --primary-orange: #ff6b35;
-        --dark-bg: #0f172a;
-        --card-bg: #1e293b;
-        --text-primary: #f8fafc;
-        --text-secondary: #94a3b8;
-        --border-color: rgba(255, 255, 255, 0.1);
-        --gradient-orange: linear-gradient(135deg, #ff6b35, #f59e0b);
+    --primary-orange: #ff6b35;
+    --dark-bg: #0f172a;
+    --card-bg: #1e293b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --gradient-orange: linear-gradient(135deg, #ff6b35, #f59e0b);
     }
 
     .page-container {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        background: var(--dark-bg);
-        color: var(--text-primary);
-        padding: 2rem;
-        max-width: 900px;
-        margin: 2rem auto;
-        border-radius: 20px;
-        position: relative;
-        overflow: hidden;
-        border: 1px solid var(--border-color);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--dark-bg);
+    color: var(--text-primary);
+    padding: 2rem;
+    max-width: 900px;
+    margin: 2rem auto;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
     }
 
     .bg-animation {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        background: radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 40%);
-        animation: float 20s ease-in-out infinite;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 40%);
+    animation: float 20s ease-in-out infinite;
     }
 
     @@keyframes float {
-        0%, 100% {
-            transform: translate(0, 0);
-        }
+    0%, 100% {
+    transform: translate(0, 0);
+    }
 
-        50% {
-            transform: translate(20px, -20px);
-        }
+    50% {
+    transform: translate(20px, -20px);
+    }
     }
 
     .header-container {
-        text-align: center;
-        margin-bottom: 2.5rem;
-        position: relative;
-        z-index: 1;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+    z-index: 1;
     }
 
     .page-title {
-        font-size: 2.5rem;
-        font-weight: 800;
-        background: var(--gradient-orange);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 0.5rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 1rem;
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--gradient-orange);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
     }
 
-        .page-title .icon {
-            font-size: 2rem;
-        }
+    .page-title .icon {
+    font-size: 2rem;
+    }
 
     .page-subtitle {
-        color: var(--text-secondary);
-        font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
     }
 
     .leaderboard-table-container {
-        background: var(--card-bg);
-        border-radius: 15px;
-        padding: 1rem;
-        border: 1px solid var(--border-color);
-        position: relative;
-        z-index: 1;
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    position: relative;
+    z-index: 1;
     }
 
     table {
-        width: 100%;
-        border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
     }
 
     th, td {
-        padding: 1rem;
-        text-align: left;
+    padding: 1rem;
+    text-align: left;
     }
 
     th {
-        color: var(--text-secondary);
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        border-bottom: 2px solid var(--border-color);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    border-bottom: 2px solid var(--border-color);
     }
 
     tbody tr {
-        border-bottom: 1px solid var(--border-color);
-        transition: background-color 0.3s ease;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.3s ease;
     }
 
-        tbody tr:last-child {
-            border-bottom: none;
-        }
+    tbody tr:last-child {
+    border-bottom: none;
+    }
 
-        tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
+    tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    }
 
     .top-player {
-        background: linear-gradient(90deg, rgba(255, 107, 53, 0.15), transparent);
-        border-left: 4px solid var(--primary-orange);
+    background: linear-gradient(90deg, rgba(255, 107, 53, 0.15), transparent);
+    border-left: 4px solid var(--primary-orange);
     }
 
     .rank {
-        font-weight: 700;
-        font-size: 1.1rem;
-        color: var(--text-secondary);
-        text-align: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    text-align: center;
     }
 
     .player-info {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     }
 
-        .player-info a {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: color 0.3s ease;
-        }
+    .player-info a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: color 0.3s ease;
+    }
 
-            .player-info a:hover {
-                color: var(--primary-orange);
-            }
+    .player-info a:hover {
+    color: var(--primary-orange);
+    }
 
     .player-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid var(--border-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
     }
 
     .cap-icon {
-        width: 30px;
-        height: 30px;
+    width: 40px;
+    height: 30px;
     }
 
     .stat-runs {
-        font-weight: 700;
-        font-size: 1.2rem;
-        color: var(--primary-orange);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--primary-orange);
     }
 
     .stat {
-        font-weight: 500;
-        text-align: center;
+    font-weight: 500;
+    text-align: center;
     }
 
     .footer-section {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 2rem;
-        position: relative;
-        z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    position: relative;
+    z-index: 1;
     }
 
     .refresh-button {
-        background: var(--gradient-orange);
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 50px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
+    background: var(--gradient-orange);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     }
 
-        .refresh-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 107, 53, 0.2);
-        }
+    .refresh-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 107, 53, 0.2);
+    }
 
     .last-updated {
-        font-size: 0.9em;
-        color: var(--text-secondary);
+    font-size: 0.9em;
+    color: var(--text-secondary);
     }
 
     .spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid rgba(255, 107, 53, 0.3);
-        border-top: 3px solid var(--primary-orange);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 107, 53, 0.3);
+    border-top: 3px solid var(--primary-orange);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
     }
 
     .loading-cell {
-        text-align: center;
-        padding: 3rem;
-        color: var(--text-secondary);
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
     }
 
-        .loading-cell .spinner {
-            margin: 0 auto 1rem;
-        }
+    .loading-cell .spinner {
+    margin: 0 auto 1rem;
+    }
 
     @@keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
+    0% {
+    transform: rotate(0deg);
+    }
 
-        100% {
-            transform: rotate(360deg);
-        }
+    100% {
+    transform: rotate(360deg);
+    }
     }
 
     @@media (max-width: 768px) {
-        .page-container {
-            padding: 1rem;
-            margin: 1rem;
-        }
+    .page-container {
+    padding: 1rem;
+    margin: 1rem;
+    }
 
-        .page-title {
-            font-size: 2rem;
-        }
+    .page-title {
+    font-size: 2rem;
+    }
 
-        th, td {
-            padding: 0.75rem;
-        }
+    th, td {
+    padding: 0.75rem;
+    }
 
-        .player-info a {
-            flex-direction: column;
-            text-align: center;
-            gap: 0.5rem;
-        }
+    .player-info a {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+    }
 
-        .footer-section {
-            flex-direction: column;
-            gap: 1rem;
-        }
+    .footer-section {
+    flex-direction: column;
+    gap: 1rem;
+    }
     }
 </style>
 
@@ -394,8 +395,9 @@
     async Task Refresh()
     {
         players = new List<Player>();
-        StateHasChanged();
+        this.cricHeroesApiClient.ResetCache();
         await matchService.UpdateLatestMatchData();
         await LoadData();
+        StateHasChanged();
     }
 }
