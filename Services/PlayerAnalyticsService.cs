@@ -13,12 +13,17 @@ namespace CricHeroesAnalytics.Services
         private readonly ILogger _logger;
         private readonly IPlayerRepository _playerRepository;
         private readonly IPlayerRatingService playerRatingService;
+        private readonly ICricHeroesApiClient cricHeroesApiClient;
 
-        public PlayerAnalyticsService(IPlayerRepository playerRepository, ILogger<PlayerAnalyticsService> logger, IPlayerRatingService playerRatingService) 
+        public PlayerAnalyticsService(IPlayerRepository playerRepository, 
+            ILogger<PlayerAnalyticsService> logger,
+            IPlayerRatingService playerRatingService,
+            ICricHeroesApiClient cricHeroesApiClient) 
         {
             _playerRepository = playerRepository;
             this._logger = logger;
             this.playerRatingService = playerRatingService;
+            this.cricHeroesApiClient = cricHeroesApiClient;
         }
         public async Task UpdatePlayerStatsForMatch(string matchId, List<Scorecard> Scorecard, DateTime matchStartTime)
         {
@@ -151,7 +156,16 @@ namespace CricHeroesAnalytics.Services
 
         public async Task<List<Entities.Player>> GetAllPlayersAsync()
         {
-            var allPlayers = await this._playerRepository.GetAllPlayersAsync();
+            List<Entities.Player> allPlayers = await this._playerRepository.GetAllPlayersAsync();
+            List<Task> fetchTasks = new List<Task>();
+            foreach(Entities.Player p in allPlayers)
+            {
+                fetchTasks.Add(Task.Run(async () =>
+                {
+                    p.PlayerProfilePic = await cricHeroesApiClient.GetProfilePictureUrlAsync(p.Id).ConfigureAwait(false);
+                }));
+            }
+            await Task.WhenAll(fetchTasks);
             return this.GetActivePlayers(allPlayers);
         }
 

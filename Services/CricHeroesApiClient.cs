@@ -7,15 +7,21 @@ using OpenQA.Selenium;
 using PuppeteerSharp;
 using System.Net.Http.Headers;
 using System.Security.Policy;
+using System.Net.Http;
+using System.Text.Json;
+using HtmlAgilityPack;
+using System.Collections.Concurrent;
 
 namespace CricHeroesAnalytics.Services
 {
     public class CricHeroesApiClient : ICricHeroesApiClient
     {
+        private static readonly ConcurrentDictionary<string, string?> _profileUrlCache = new();
         private readonly ILogger logger;
         private string buildId;
         private const string BuildConstant = "76g_qHZmcMiNzqsUhmXqh";
         private SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private HttpClient _httpClient = new HttpClient();
 
         public CricHeroesApiClient(ILogger<CricHeroesApiClient> logger)
         {
@@ -146,108 +152,6 @@ namespace CricHeroesAnalytics.Services
             }
         }
 
-        private async Task UpdateBuildId()
-        {
-            var launchOptions = new LaunchOptions
-            {
-                Headless = true,
-                Args = ["--no-sandbox", "--disable-setuid-sandbox"],
-#if DEBUG
-                // set nothing
-#else
-                ExecutablePath = "/home/site/wwwroot/Chromium/Linux-1352509/chrome-linux/chrome",
-                Browser = SupportedBrowser.Chromium,
-#endif
-                Channel = PuppeteerSharp.BrowserData.ChromeReleaseChannel.Stable,
-                LogProcess = true,
-            };
-            launchOptions.Env.Add("LD_LIBRARY_PATH", "/usr/lib/x86_64-linux-gnu");
-
-            var browser = await Puppeteer.LaunchAsync(launchOptions);
-            try
-            {
-
-                // Create a new page
-                var page = await browser.NewPageAsync();
-
-                // Set the necessary headers
-                //            await page.SetExtraHttpHeadersAsync(new System.Collections.Generic.Dictionary<string, string>
-                //{
-                //    { "accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7" },
-                //    { "accept-language", "en-US,en;q=0.9" },
-                //    { "cache-control", "max-age=0" },
-                //    { "priority", "u=0, i" },
-                //    { "sec-ch-ua", "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Microsoft Edge\";v=\"128\"" },
-                //    { "sec-ch-ua-mobile", "?0" },
-                //    { "sec-ch-ua-platform", "\"Windows\"" },
-                //    { "sec-fetch-dest", "document" },
-                //    { "sec-fetch-mode", "navigate" },
-                //    { "sec-fetch-site", "same-origin" },
-                //    { "sec-fetch-user", "?1" },
-                //    { "upgrade-insecure-requests", "1" },
-                //    { "user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0" }
-                //});
-
-                // Set the cookies
-                var cookies = new CookieParam[]
-                {
-            new CookieParam { Name = "udid", Value = "8096b70bf47c5b69247d60a1239d90aa", Domain = "cricheroes.com" },
-            new CookieParam { Name = "_fbp", Value = "fb.1.1725695411476.374579704170436648", Domain = "cricheroes.com" },
-            new CookieParam { Name = "_gcl_au", Value = "1.1.915983878.1725695412", Domain = "cricheroes.com" },
-            new CookieParam { Name = "_ga", Value = "GA1.1.1795357793.1725695412", Domain = "cricheroes.com" },
-            new CookieParam { Name = "_cc_id", Value = "8a688e0c693bf9df657a7c9fedc6fe1f", Domain = "cricheroes.com" },
-            new CookieParam { Name = "panoramaId_expiry", Value = "1725781811448", Domain = "cricheroes.com" },
-            new CookieParam { Name = "_clck", Value = "2kldq0%7C2%7Cfoz%7C0%7C1711", Domain = "cricheroes.com" },
-            new CookieParam { Name = "cto_bundle", Value = "LybzfV9mTG5CYmlaRms3UVo3ejZTZXlmN3JKQXFBbE43NFpmY1Fob1NjWUF6Y1dQN0VlOXR4WWdtMlVzZDZ3b2FBNUtUaWdqaFJGbElETW5DVFVzZmEwejhaTUFvY29PU2o4b1VtSGpiYVhmdmhQUnZka1cwQ3YxMzhObDVITFBPTERibk94RWdtOCUyRm5oWTE2WTNDNXJYbTBpUSUzRCUzRA", Domain = "cricheroes.com" },
-            new CookieParam { Name = "FCNEC", Value = "%5B%5B%22AKsRol8KWX5Vxoi7nVXx6SOTnwK_zkAIvmPNa57SIsSvPKHCpUXN_SJD7IJE_VxMIj6EJ76qVekw7kspkZNRUrJnzKXiYvuviaQFvt4l8IPZiXnPS7w0ylM0KsCXRx4Xyetza97ZYYuRc4XAKnpjSxZByMFIRoQxIQ%3D%3D%22%5D%5D", Domain = "cricheroes.com" },
-            new CookieParam { Name = "_ga_RHRT76MSXD", Value = "GS1.1.1725695411.1.1.1725695722.60.0.0", Domain = "cricheroes.com" },
-            new CookieParam { Name = "_clsk", Value = "16tl17z%7C1725698192501%7C1%7C1%7Cz.clarity.ms%2Fcollect", Domain = "cricheroes.com" }
-                };
-
-                //await page.SetCookieAsync(cookies);
-
-                // Navigate to the URL
-                await page.GoToAsync("https://cricheroes.com/team-profile/5455774/cult-100/matches");
-
-                // Optionally, wait for a response if needed
-                //var response = await page.WaitForResponseAsync(response => response.Url.Contains("matches") && response.Status == System.Net.HttpStatusCode.OK);
-                //Console.WriteLine($"Response Status: {response.Status}");
-                await Task.Delay(3000);
-                // Get the content of the page
-                var htmlContent = await page.GetContentAsync();
-                this.logger.LogInformation(htmlContent);
-
-                // Close browser
-                await browser.CloseAsync();
-
-                if (htmlContent != null)
-                {
-                    int index = htmlContent.IndexOf("/_buildManifest.js");
-                    if (index < 0)
-                    {
-                        return;
-                    }
-                    int endIndex = index;
-                    index--;
-                    while (htmlContent[index] != '/')
-                    {
-                        index--;
-                    }
-                    int startIndex = index + 1;
-                    this.buildId = htmlContent.Substring(startIndex, endIndex - startIndex);
-                }
-            }
-            catch (Exception ex)
-            {
-                this.logger.LogError($"An error occurred: {ex.Message}");
-            }
-            finally
-            {
-                await browser.CloseAsync();
-                browser.Dispose();
-            }
-        }
-
         private string GenerateTeamName(string teamA, string teamB)
         {
             teamA = teamA.ToLower();
@@ -261,5 +165,92 @@ namespace CricHeroesAnalytics.Services
         {
             this.buildId = buildIdLatest;
         }
+
+        public async Task<string?> GetProfilePictureUrlAsync(string profileId)
+        {
+            if (string.IsNullOrWhiteSpace(profileId))
+            {
+                return null;
+            }
+
+            // --- CACHING STEP 1: Check the cache first ---
+            if (_profileUrlCache.TryGetValue(profileId, out var cachedUrl))
+            {
+                System.Diagnostics.Debug.WriteLine($"Cache HIT for profile ID: {profileId}");
+                return cachedUrl; // Return the cached URL immediately
+            }
+
+            // --- If not in cache, proceed to fetch ---
+            System.Diagnostics.Debug.WriteLine($"Cache MISS for profile ID: {profileId}. Fetching from web.");
+            var fetchedUrl = await FetchAndParseUrlFromWebAsync(profileId);
+
+            // --- CACHING STEP 2: Add the newly fetched URL to the cache ---
+            // We use TryAdd to handle the rare case where another request might have added it
+            // just after our cache check.
+            if (!string.IsNullOrEmpty(fetchedUrl))
+            {
+                _profileUrlCache.TryAdd(profileId, fetchedUrl);
+            }
+            
+            return fetchedUrl;
+        }
+
+        /// <summary>
+        /// Contains the actual logic to scrape the webpage for the URL.
+        /// </summary>
+        private async Task<string?> FetchAndParseUrlFromWebAsync(string profileId)
+        {
+            var requestUri = $"https://cricheroes.com/player-profile/{profileId}/stats/matches";
+
+            try
+            {
+                var htmlContent = await _httpClient.GetStringAsync(requestUri);
+                var htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(htmlContent);
+                var scriptNode = htmlDoc.GetElementbyId("__NEXT_DATA__");
+
+                if (scriptNode == null) return null;
+
+                var jsonData = scriptNode.InnerHtml;
+                using var jsonDoc = JsonDocument.Parse(jsonData);
+                return FindJsonProperty(jsonDoc.RootElement, "profile_photo");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"An error occurred while fetching profile {profileId}: {ex.Message}");
+                return "/images/Final_Cult11.png";
+            }
+        }
+
+        /// <summary>
+        /// Recursively searches a JsonElement for a specific property name.
+        /// </summary>
+        private string? FindJsonProperty(JsonElement element, string propertyName)
+        {
+            if (element.ValueKind == JsonValueKind.Object)
+            {
+                if (element.TryGetProperty(propertyName, out var propertyValue) && propertyValue.ValueKind == JsonValueKind.String)
+                {
+                    return propertyValue.GetString();
+                }
+
+                foreach (var property in element.EnumerateObject())
+                {
+                    var result = FindJsonProperty(property.Value, propertyName);
+                    if (result != null) return result;
+                }
+            }
+            else if (element.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var item in element.EnumerateArray())
+                {
+                    var result = FindJsonProperty(item, propertyName);
+                    if (result != null) return result;
+                }
+            }
+
+            return null;
+        }
     }
 }
+

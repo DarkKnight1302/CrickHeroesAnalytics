@@ -1,0 +1,281 @@
+﻿@page "/purple-cap-leaderboard"
+@rendermode InteractiveServer
+@using CricHeroesAnalytics.Entities
+@using CricHeroesAnalytics.Repositories
+@using CricHeroesAnalytics.Services.Interfaces
+@using CricHeroesAnalytics.Components.Layout
+@inject IPlayerAnalyticsService playerService
+@inject IMatchAnalyticService matchService
+@inject IJobExecutionRepository jobExecutionRepository
+@inject IPlayerStatService playerStatService
+@inherits LayoutComponentBase
+@layout MainLayout
+@inject IJSRuntime JS
+
+<main class="page-container">
+    <div class="header">
+        <h1>
+            <img src="/images/Final_Cult11.png" alt="Logo" class="logo" />
+            Cult 11 - Purple Cap
+        </h1>
+    </div>
+
+    <div class="leaderboards-container">
+        <!-- Purple Cap Leaderboard -->
+        <div class="leaderboard-section purple-cap">
+            <h2>Purple Cap</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Wickets</th>
+                        <th>Bowling Average</th>
+                        <th>Economy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (players.Any())
+                    {
+                        @foreach (var player in players.OrderByDescending(p => p.TotalWickets).ThenBy(p => p.BowlingEconomy == 0 ? double.MaxValue : p.BowlingEconomy))
+                        {
+                            <tr>
+                                <td>
+                                    <a href="@player.PlayerProfile" target="_blank">@player.Name</a> &nbsp;
+                                    @if (player == topWicketTaker)
+                                    {
+                                        <img src="https://newhorizonblobstorage.blob.core.windows.net/cricheroesanalytics/PurpleCap.jpeg" alt="Purple Cap" class="cap-icon" style="max-height:40px; max-width:40px" />
+                                    }
+                                </td>
+                                <td>@player.TotalWickets</td>
+                                <td>@player.BowlingAverage</td>
+                                <td>
+                                    @GetStatWithArrow(player.BowlingEconomy, last5BowlingStats.TryGetValue(player.Id, out var last5Eco) ? last5Eco : 0, false)
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">Loading player data...</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="refresh-section">
+        <button @onclick="Refresh" class="refresh-button">Refresh Leaderboard</button>
+        <div class="last-updated">
+            Last updated: @lastUpdateTime.ToString("MMMM dd, yyyy hh:mm tt")
+        </div>
+    </div>
+</main>
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+        color: #343a40;
+    }
+
+    .page-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 10px;
+    }
+
+    .header {
+        text-align: center;
+        margin: 20px 0;
+        background-color: #495057;
+        padding: 20px;
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .logo {
+        width: 80px;
+        height: auto;
+        margin-right: 15px;
+    }
+
+    .leaderboards-container {
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .leaderboard-section h2 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+        color: #343a40;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        text-align: center;
+        padding: 15px;
+        border: 1px solid #dee2e6;
+    }
+
+    th {
+        background-color: #343a40;
+        color: white;
+        font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    tr:hover {
+        background-color: #e9ecef;
+        cursor: pointer;
+    }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+    .refresh-section {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .refresh-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .refresh-button:hover {
+            background-color: #0056b3;
+        }
+
+    .last-updated {
+        font-size: 0.9em;
+        color: #6c757d;
+        margin-top: 10px;
+    }
+
+    @@media (max-width: 768px) {
+        .header h1 {
+            font-size: 1.8em;
+        }
+
+        .leaderboards-container {
+            padding: 10px;
+        }
+
+        table {
+            font-size: 0.9em;
+        }
+
+        .refresh-button {
+            width: 100%;
+            padding: 15px;
+        }
+    }
+</style>
+
+@code {
+    private IEnumerable<Player> players = new List<Player>();
+    private Player? topWicketTaker;
+    private DateTimeOffset lastUpdateTime = DateTimeOffset.MinValue;
+    private Dictionary<string, double> last5BowlingStats = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        players = await playerService.GetAllPlayersAsync();
+
+        foreach (var p in players)
+        {
+            // Bowling average calculation
+            if (p.TotalWickets > 0)
+            {
+                double bowlingAverage = ((double)p.RunsGiven / (double)p.TotalWickets);
+                p.BowlingAverage = Math.Round(bowlingAverage, 1);
+            }
+
+            // Bowling economy for last 5 innings
+            double last5Eco = playerStatService.GetEconomyFromLastNInnings(p, 5);
+            last5BowlingStats[p.Id] = last5Eco;
+        }
+
+        topWicketTaker = players.OrderByDescending(p => p.TotalWickets).FirstOrDefault();
+        lastUpdateTime = await jobExecutionRepository.GetLastSuccessJobTime(Constants.GlobalConstants.CustomUpdateScoreJob);
+        StateHasChanged();
+    }
+
+    private MarkupString GetStatWithArrow(double overall, double last5, bool isHigherBetter = true)
+    {
+        const string arrowStyle = "font-family: 'Consolas', 'Courier New', monospace; font-size: 0.95em; vertical-align: -0.15em; line-height: 1; display: inline-block;";
+        const string dotStyle = "color:gray; font-size: 1em; vertical-align: -0.15em; display: inline-block;";
+
+        if (last5 == 0)
+            return new MarkupString($"{overall}");
+
+        if ((isHigherBetter && last5 > overall) || (!isHigherBetter && last5 < overall))
+        {
+            // Green up arrow
+            return new MarkupString($@"<span style=""color:green;{arrowStyle}"">&#708;</span> {overall}");
+        }
+        else if ((isHigherBetter && last5 < overall) || (!isHigherBetter && last5 > overall))
+        {
+            // Red down arrow
+            return new MarkupString($@"<span style=""color:red;{arrowStyle}"">&#709;</span> {overall}");
+        }
+        else
+        {
+            // Gray dot for no change
+            return new MarkupString($@"<span style=""{dotStyle}"">&#8226;</span> {overall}");
+        }
+    }
+
+    async Task Refresh()
+    {
+        await matchService.UpdateLatestMatchData();
+        await LoadData();
+    }
+}

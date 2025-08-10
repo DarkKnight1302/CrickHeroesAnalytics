@@ -12,5 +12,7 @@ namespace CricHeroesAnalytics.Services.Interfaces
         public void FetchBuildUsingSelenium();
 
         public void UpdateBuildId(string buildId);
+
+        public Task<string?> GetProfilePictureUrlAsync(string playerId);
     }
 }

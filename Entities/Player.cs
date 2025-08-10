@@ -15,6 +15,8 @@ namespace CricHeroesAnalytics.Entities
 
         public string PlayerProfile => $"https://cricheroes.com/player-profile/{this.Id}/stats/stats";
 
+        public string? PlayerProfilePic { get; set; }
+
         public double BattingAverage => Math.Round(this.GotOutCount > 0 ? (double)this.TotalRuns / (double)this.GotOutCount : 0D, 1);
 
         public int GotOutCount { get; set; } = 0;
