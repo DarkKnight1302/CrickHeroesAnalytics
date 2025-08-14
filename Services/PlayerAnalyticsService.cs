@@ -3,7 +3,6 @@ using CricHeroesAnalytics.Entities;
 using CricHeroesAnalytics.Models.ScoreCardModels;
 using CricHeroesAnalytics.Repositories;
 using CricHeroesAnalytics.Services.Interfaces;
-using OpenQA.Selenium.Internal;
 
 namespace CricHeroesAnalytics.Services
 {

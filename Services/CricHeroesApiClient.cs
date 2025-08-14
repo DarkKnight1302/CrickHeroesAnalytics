@@ -2,9 +2,6 @@
 using CricHeroesAnalytics.Models.ScoreCardModels;
 using CricHeroesAnalytics.Services.Interfaces;
 using CricHeroesAnalytics.Utilities;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium;
-using PuppeteerSharp;
 using System.Net.Http.Headers;
 using System.Security.Policy;
 using System.Net.Http;
