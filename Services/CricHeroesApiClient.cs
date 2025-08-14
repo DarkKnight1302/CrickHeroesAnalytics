@@ -31,6 +31,7 @@ namespace CricHeroesAnalytics.Services
 
         public async Task<List<MatchData>> GetMatches()
         {
+            await UpdateBuildIdAsync();
             this.logger.LogInformation("Request to fetch matches");
             await semaphore.WaitAsync();
             try
@@ -76,6 +77,7 @@ namespace CricHeroesAnalytics.Services
             {
                 throw new InvalidDataException("Invalid Match data");
             }
+            await UpdateBuildIdAsync();
             string combinedTeamName = GenerateTeamName(matchData.TeamA, matchData.TeamB);
             long matchId = matchData.MatchId;
             using (HttpClient client = new HttpClient())
@@ -113,43 +115,27 @@ namespace CricHeroesAnalytics.Services
             }
         }
 
-        public void FetchBuildUsingSelenium()
+        private async Task UpdateBuildIdAsync()
         {
-            var options = new ChromeOptions();
-            options.AddArguments("--disable-gpu");  // Disable GPU hardware acceleration
-            options.AddArguments("--no-sandbox");  // Disable the sandbox for Chrome (important for Linux)
-            options.AddArguments("--disable-dev-shm-usage");  // Overcome limited resource problems
-            using (IWebDriver driver = new ChromeDriver(options))
+            using (HttpClient httpClient = new HttpClient())
             {
-                // Navigate to the webpage
-                driver.Navigate().GoToUrl("https://cricheroes.com/team-profile/5455774/cult-100/matches");
-
-                // Optionally wait for the page to load completely
-                Thread.Sleep(1000);
-
-                // Get the page source
-                string htmlContent = driver.PageSource;
-
-                if (htmlContent != null)
+                var response = await httpClient.GetStringAsync("https://cricheroes.com/team-profile/5455774/cult-100/matches");
+                if (!string.IsNullOrEmpty(response))
                 {
-                    int index = htmlContent.IndexOf("/_buildManifest.js");
-                    if (index < 0)
+                    int index = response.IndexOf("/_buildManifest.js");
+                    if (index > 0)
                     {
-                        return;
-                    }
-                    int endIndex = index;
-                    index--;
-                    while (htmlContent[index] != '/')
-                    {
+                        int endIndex = index;
                         index--;
+                        while (response[index] != '/')
+                        {
+                            index--;
+                        }
+                        int startIndex = index + 1;
+                        string buildId = response.Substring(startIndex, endIndex - startIndex);
+                        this.buildId = buildId;
                     }
-                    int startIndex = index + 1;
-                    this.buildId = htmlContent.Substring(startIndex, endIndex - startIndex);
-                    this.logger.LogInformation($"New build Information {buildId}");
                 }
-
-                // Close the browser
-                driver.Quit();
             }
         }
 
