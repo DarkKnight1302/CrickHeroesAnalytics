@@ -522,9 +522,25 @@
         }
     }
 
+    /// <summary>
+    /// Generates a MarkupString for a player statistic, including a trend arrow
+    /// based on a comparison between the overall stat and the last 5 games.
+    /// </summary>
+    /// <param name="overall">The overall statistic value.</param>
+    /// <param name="last5">The statistic value from the last 5 games.</param>
+    /// <param name="isHigherBetter">A boolean indicating if a higher value is better for this stat.</param>
+    /// <returns>A MarkupString containing the formatted stat and a trend indicator.</returns>
     private MarkupString GetStatWithArrow(double overall, double last5, bool isHigherBetter = true)
     {
-        const string arrowStyle = "font-family: 'Consolas', 'Courier New', monospace; font-size: 0.95em; vertical-align: -0.15em; display: inline-block; margin-right: 4px;";
+        // Using inline SVG for cleaner, scalable arrows.
+        const string svgStyle = "display: inline-block; vertical-align: -0.2em; margin-right: 4px;";
+
+        // SVG for a green up arrow (chevron) at 50% opacity
+        string upArrowSvg = $@"<svg width=""12"" height=""12"" viewBox=""0 0 16 16"" fill=""none"" stroke=""#22c55e80"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round"" style=""{svgStyle}""><path d=""M4 10l4-4 4 4""/></svg>";
+
+        // SVG for a red down arrow (chevron) at 50% opacity
+        string downArrowSvg = $@"<svg width=""12"" height=""12"" viewBox=""0 0 16 16"" fill=""none"" stroke=""#ef444480"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round"" style=""{svgStyle}""><path d=""M4 6l4 4 4-4""/></svg>";
+
         const string dotStyle = "color:gray; font-size: 1em; vertical-align: -0.15em; display: inline-block; margin-right: 4px;";
 
         string overallFormatted = overall.ToString("0.00");
@@ -532,14 +548,13 @@
         if (last5 == 0)
             return new MarkupString(overallFormatted);
 
-        // For economy, lower is better, so isHigherBetter is false.
         if ((isHigherBetter && last5 > overall) || (!isHigherBetter && last5 < overall))
         {
-            return new MarkupString($@"<span style=""color:#22c55e;{arrowStyle}"">▲</span> {overallFormatted}");
+            return new MarkupString($@"{upArrowSvg} {overallFormatted}");
         }
         else if ((isHigherBetter && last5 < overall) || (!isHigherBetter && last5 > overall))
         {
-            return new MarkupString($@"<span style=""color:#ef4444;{arrowStyle}"">▼</span> {overallFormatted}");
+            return new MarkupString($@"{downArrowSvg} {overallFormatted}");
         }
         else
         {
