@@ -168,9 +168,9 @@ namespace CricHeroesAnalytics.Services
             return this.GetActivePlayers(allPlayers);
         }
 
-        public List<Entities.Player> GetAllRounderLeaderboard()
+        public async Task<List<Entities.Player>> GetAllRounderLeaderboard()
         {
-            var allPlayers = GetAllPlayers();
+            var allPlayers = await GetAllPlayersAsync();
             allPlayers = GetAllRounderApplicablePlayers(allPlayers);
             Dictionary<string, double> battingRating = new Dictionary<string, double>();
             Dictionary<string, double> bowlingRating = new Dictionary<string, double>();
