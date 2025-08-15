@@ -323,9 +323,9 @@ namespace CricHeroesAnalytics.Services
             return bowlingRanked;
         }
 
-        public List<Entities.Player> GetSuperStrikerLeaderboard()
+        public async Task<List<Entities.Player>> GetSuperStrikerLeaderboard()
         {
-            var allPlayers = GetAllPlayers();
+            var allPlayers = await GetAllPlayersAsync();
             allPlayers = GetPlayersEligibleForSuperStiker(allPlayers);
             allPlayers.Sort((a, b) => b.StrikeRate.CompareTo(a.StrikeRate));
             return allPlayers;
