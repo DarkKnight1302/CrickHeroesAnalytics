@@ -456,6 +456,26 @@
                 box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3);
             }
 
+        /* Footer Section */
+        .footer {
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+            .footer a {
+                color: var(--primary-orange);
+                text-decoration: none;
+                transition: text-decoration 0.3s ease;
+            }
+
+                .footer a:hover {
+                    text-decoration: underline;
+                }
+
         /* Responsive Design */
         @@media (max-width: 768px) {
             .nav-menu {
@@ -620,6 +640,11 @@
             </div>
         </section>
     </main>
+
+    <footer class="footer">
+        <p>&copy; @DateTime.Now.Year CULT 11 - Developed by <a href="https://www.linkedin.com/in/robin-parashar-8397aa85/" target="_blank" rel="noopener noreferrer">Robin Parashar</a></p>
+    </footer>
+
 </body>
 </html>
 
