@@ -1,4 +1,5 @@
-﻿using CricHeroesAnalytics.Models.ScoreCardModels;
+﻿using CricHeroesAnalytics.Models;
+using CricHeroesAnalytics.Models.ScoreCardModels;
 
 namespace CricHeroesAnalytics.Services.Interfaces
 {
@@ -17,5 +18,7 @@ namespace CricHeroesAnalytics.Services.Interfaces
         public List<Entities.Player> GetBattersByRank();
 
         public List<Entities.Player> GetBowlersByRank();
+
+        public Task<CapHolders> GetCapHoldersAsync();
     }
 }

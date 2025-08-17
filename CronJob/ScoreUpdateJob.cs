@@ -48,26 +48,33 @@ namespace CricHeroesAnalytics.CronJob
         {
             var players = await this.playerRepository.GetAllPlayersAsync();
             var matches = await this.matchRepository.GetAllMatches();
-            Dictionary<string, Dictionary<string, string>> d = new Dictionary<string, Dictionary<string, string>>();
+            Dictionary<string, Dictionary<string, (int,int)>> d = new Dictionary<string, Dictionary<string, (int, int)>>();
             foreach (Match m in matches)
             {
-                Dictionary<string, string> battingOut = new Dictionary<string, string>();
+                Dictionary<string, (int, int)> boundaries = new Dictionary<string, (int, int)>();
                 List<Batting> bt = m.Batting;
                 foreach (Batting b in bt)
                 {
-                    battingOut.TryAdd(b.PlayerId.ToString(), b.HowToOut);
+                    boundaries.TryAdd(b.PlayerId.ToString(), (b.Fours, b.Sixes));
                 }
-                d.TryAdd(m.MatchId, battingOut);
+                d.TryAdd(m.MatchId, boundaries);
             }
             foreach(var player in players)
             {
                 var map = player.PlayerRunMatchMap;
+                int fours = 0;
+                int sixes = 0;
                 foreach(var kv in map)
                 {
                     string matchId = kv.Key;
                     PlayerRunsPerMatch playerRunsPerMatch = kv.Value;
-                    playerRunsPerMatch.WasNotOut = GlobalConstants.NotOutList.Contains(d[matchId][player.Id]);
+                    playerRunsPerMatch.fours = d[matchId][player.Id].Item1;
+                    playerRunsPerMatch.sixes = d[matchId][player.Id].Item2;
+                    fours += playerRunsPerMatch.fours;
+                    sixes += playerRunsPerMatch.sixes;
                 }
+                player.fours = fours;
+                player.sixes = sixes;
                 await this.playerRepository.CreateOrUpdatePlayer(player);
             }
         }

@@ -9,5 +9,9 @@
         public int BallsPlayed { get; set; }
 
         public bool WasNotOut { get; set; } = false;
+
+        public int fours { get; set; }
+
+        public int sixes { get; set; }
     }
 }

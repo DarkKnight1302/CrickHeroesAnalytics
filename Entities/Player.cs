@@ -37,6 +37,12 @@ namespace CricHeroesAnalytics.Entities
 
         public double BowlingAverage { get; set; }
 
+        public int fours { get; set; }
+
+        public int sixes { get; set; }
+
+        public int Boundaries => fours + sixes;
+
         public DateTime LastMatchUpdated { get; set; } = DateTime.MinValue;
 
         public Dictionary<string, PlayerRunsPerMatch> PlayerRunMatchMap { get; set; } = new Dictionary<string, PlayerRunsPerMatch>();

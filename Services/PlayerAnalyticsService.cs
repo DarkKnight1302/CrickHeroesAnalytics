@@ -1,5 +1,6 @@
 ﻿using CricHeroesAnalytics.Constants;
 using CricHeroesAnalytics.Entities;
+using CricHeroesAnalytics.Models;
 using CricHeroesAnalytics.Models.ScoreCardModels;
 using CricHeroesAnalytics.Repositories;
 using CricHeroesAnalytics.Services.Interfaces;
@@ -63,6 +64,8 @@ namespace CricHeroesAnalytics.Services
                 playerRunsPerMatch.MatchId = matchId;
                 playerRunsPerMatch.Runs = battingStats.Runs;
                 playerRunsPerMatch.BallsPlayed = battingStats.Balls;
+                playerRunsPerMatch.fours = battingStats.Fours;
+                playerRunsPerMatch.sixes = battingStats.Sixes;
                 playerRunsPerMatch.WasNotOut = GlobalConstants.NotOutList.Contains(battingStats.HowToOut);
                 player.PlayerRunMatchMap[matchId] = playerRunsPerMatch;
                 UpdateTotalRuns(player);
@@ -75,13 +78,19 @@ namespace CricHeroesAnalytics.Services
         {
             int totalRuns = 0;
             int totalBalls = 0;
+            int fours = 0;
+            int sixes = 0;
             foreach(var kv in player.PlayerRunMatchMap)
             {
                 totalRuns += kv.Value.Runs;
                 totalBalls += kv.Value.BallsPlayed;
+                fours += kv.Value.fours;
+                sixes += kv.Value.sixes;
             }
             player.TotalRuns = totalRuns;
             player.BallsPlayed = totalBalls;
+            player.fours = fours;
+            player.sixes = sixes;
             if (totalBalls > 0)
             {
                 player.StrikeRate = (totalRuns * 100) / totalBalls;
@@ -342,6 +351,20 @@ namespace CricHeroesAnalytics.Services
                 }
             }
             return eligiblePlayers;
+        }
+
+        public async Task<CapHolders> GetCapHoldersAsync()
+        {
+            var players = await this.GetAllPlayersAsync();
+            CapHolders capHolders = new CapHolders();
+            players.Sort((a, b) => b.TotalRuns - a.TotalRuns);
+            capHolders.OrangeCap = players[0];
+            players.Sort((a, b) => b.TotalWickets - a.TotalWickets);
+            capHolders.PurpleCap = players[0];
+            players = GetPlayersEligibleForSuperStiker(players);
+            players.Sort((a, b) => b.StrikeRate - a.StrikeRate);
+            capHolders.RedCap = players[0];
+            return capHolders;
         }
     }
 }
