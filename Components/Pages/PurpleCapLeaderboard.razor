@@ -11,6 +11,12 @@
 @inject ICricHeroesApiClient cricHeroesApiClient
 @inject IJSRuntime JS
 
+@*
+    For responsiveness to work correctly, ensure the following meta tag is in your main layout file
+    (e.g., _Host.cshtml or App.razor) inside the <head> section:
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+*@
+
 <div class="bg-animation"></div>
 
 <header class="header">
@@ -56,21 +62,23 @@
                         @foreach (var player in players.Select((p, index) => new { Player = p, Rank = index + 1 }))
                         {
                             <tr class="@(player.Rank == 1 ? "rank-1-row" : "")">
-                                <td class="rank-cell">@player.Rank</td>
-                                <td class="player-cell">
+                                <td class="rank-cell" data-label="@player.Rank">@player.Rank</td>
+                                <td class="player-cell" data-label="Player">
                                     <img src="@player.Player.PlayerProfilePic"
                                          alt="@player.Player.Name"
                                          class="player-profile-img"
                                          onerror="this.onerror=null; this.src='https://placehold.co/60x60/1e293b/f8fafc?text=C11';" />
-                                    <a href="@player.Player.PlayerProfile" target="_blank" class="player-link">@player.Player.Name</a>
-                                    @if (player.Rank == 1)
-                                    {
-                                        <img src="/images/PurpleCap.png" alt="Purple Cap" class="cap-icon" />
-                                    }
+                                    <div class="player-info">
+                                        <a href="@player.Player.PlayerProfile" target="_blank" class="player-link">@player.Player.Name</a>
+                                        @if (player.Rank == 1)
+                                        {
+                                            <img src="/images/PurpleCap.png" alt="Purple Cap" class="cap-icon" />
+                                        }
+                                    </div>
                                 </td>
-                                <td class="stat-cell">@player.Player.TotalWickets</td>
-                                <td class="stat-cell">@player.Player.BowlingAverage.ToString("0.00")</td>
-                                <td class="stat-cell">@GetStatWithArrow(player.Player.BowlingEconomy, last5BowlingStats.TryGetValue(player.Player.Id, out var last5Eco) ? last5Eco : 0, false)</td>
+                                <td class="stat-cell" data-label="Wickets"><div class="stat-value-wrapper">@player.Player.TotalWickets</div></td>
+                                <td class="stat-cell" data-label="Average"><div class="stat-value-wrapper">@player.Player.BowlingAverage.ToString("0.00")</div></td>
+                                <td class="stat-cell" data-label="Economy"><div class="stat-value-wrapper">@GetStatWithArrow(player.Player.BowlingEconomy, last5BowlingStats.TryGetValue(player.Player.Id, out var last5Eco) ? last5Eco : 0, false)</div></td>
                             </tr>
                         }
                     </tbody>
@@ -102,13 +110,7 @@
 </main>
 
 <style>
-    /* --- Inherited Styles from Home Page --- */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
+    /* --- Base Styles (some inherited from your original code) --- */
     :root {
         --primary-orange: #ff6b35;
         --primary-purple: #8b5cf6;
@@ -155,17 +157,20 @@
         }
 
     @@keyframes float {
-        0%, 100% {
-            transform: translate(0, 0) rotate(0deg);
-        }
+        0%, 100%
 
-        33% {
-            transform: translate(30px, -30px) rotate(120deg);
-        }
+    {
+        transform: translate(0, 0) rotate(0deg);
+    }
 
-        66% {
-            transform: translate(-20px, 20px) rotate(240deg);
-        }
+    33% {
+        transform: translate(30px, -30px) rotate(120deg);
+    }
+
+    66% {
+        transform: translate(-20px, 20px) rotate(240deg);
+    }
+
     }
 
     .header {
@@ -198,7 +203,6 @@
         width: 50px;
         height: 50px;
         object-fit: contain;
-        filter: drop-shadow(0 0 10px rgba(255, 107, 53, 0.3));
     }
 
     .logo-text {
@@ -266,10 +270,11 @@
             transform: translateX(-50%);
             width: 100px;
             height: 4px;
-            background: var(--gradient-2); /* Purple gradient for this page */
+            background: var(--gradient-2);
             border-radius: 2px;
         }
 
+    /* --- Loading Spinner --- */
     .loading {
         display: flex;
         justify-content: center;
@@ -287,26 +292,31 @@
     }
 
     @@keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
+        0%
 
-        100% {
-            transform: rotate(360deg);
-        }
+    {
+        transform: rotate(0deg);
     }
 
-    /* --- Styles for Leaderboard Table --- */
+    100% {
+        transform: rotate(360deg);
+    }
+
+    }
+
+    /* --- Styles for Leaderboard Table (Desktop) --- */
     .leaderboard-table-container {
         background: var(--card-bg);
         border-radius: 20px;
         padding: 1rem 2rem;
         border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow-x: auto; /* Add horizontal scroll on very narrow desktops if needed */
     }
 
     .leaderboard-table {
         width: 100%;
         border-collapse: collapse;
+        min-width: 600px; /* Prevents table from becoming too cramped on medium screens */
     }
 
         .leaderboard-table th, .leaderboard-table td {
@@ -349,6 +359,12 @@
         gap: 1rem;
     }
 
+    .player-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
     .player-profile-img {
         width: 40px;
         height: 40px;
@@ -381,7 +397,6 @@
         text-align: right;
     }
 
-    /* Highlight for the first row */
     .rank-1-row {
         background: linear-gradient(90deg, rgba(139, 92, 246, 0.1), transparent);
     }
@@ -397,13 +412,17 @@
     .cap-icon {
         width: 40px;
         height: 30px;
+        vertical-align: middle;
     }
 
+    /* --- Footer Section --- */
     .footer-section {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-top: 2rem;
+        flex-wrap: wrap; /* Allow wrapping on small screens */
+        gap: 1rem;
     }
 
     .refresh-button {
@@ -437,33 +456,142 @@
         color: var(--text-secondary);
     }
 
+    /* --- Responsive Styles for Mobile & Tablet --- */
     @@media (max-width: 768px) {
-        .nav-menu {
-            display: none;
+        .nav-menu
+
+    {
+        display: none; /* Hides the nav menu, consider a hamburger menu instead */
+    }
+
+    .nav-container {
+        padding: 0 1rem;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+    }
+
+    .logo-image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .leaderboard-table-container {
+        padding: 0;
+        background: transparent;
+        border: none;
+    }
+
+    /* This is where the magic happens: convert table to card view */
+    .leaderboard-table, .leaderboard-table thead, .leaderboard-table tbody, .leaderboard-table th, .leaderboard-table td, .leaderboard-table tr {
+        display: block;
+    }
+
+    .leaderboard-table {
+        min-width: unset; /* Remove min-width for mobile */
+    }
+
+        .leaderboard-table thead {
+            display: none; /* Hide desktop headers */
         }
 
-        .container {
-            padding: 1rem;
+        .leaderboard-table tr {
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
+            overflow: hidden;
         }
 
-        .leaderboard-table-container {
-            padding: 0.5rem;
+        .leaderboard-table td {
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
         }
 
-        .leaderboard-table th, .leaderboard-table td {
-            padding: 0.75rem;
+    .stat-cell .stat-value-wrapper {
+        margin-left: auto;
+        padding-left: 2rem;
+    }
+
+    .leaderboard-table tr:last-child {
+        margin-bottom: 0;
+    }
+
+    .leaderboard-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* Use data-label attribute to create labels for each cell */
+    .leaderboard-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .leaderboard-table .rank-cell {
+        display: none; /* Hide original rank cell, we'll show rank with the player */
+    }
+
+    .player-cell {
+        order: -1; /* Make player cell appear at the top of the card */
+        font-size: 1.1rem;
+        background: rgba(255, 255, 255, 0.03);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+        .player-cell::before {
+            content: 'Rank #' attr(data-label); /* Use data-label to get rank number */
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
         }
 
-        .leaderboard-table {
-            font-size: 0.9rem;
+        .player-cell .player-info {
+            width: 100%;
+            justify-content: space-between;
         }
 
-        .footer-section {
-            flex-direction: column;
-            gap: 1rem;
+    .rank-1-row {
+        background: none; /* Reset desktop gradient */
+        border-color: var(--gold); /* Highlight with a gold border instead */
+    }
+
+        .rank-1-row .player-cell {
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), transparent);
         }
+
+            .rank-1-row .player-cell::before {
+                color: var(--gold);
+            }
+
+    .footer-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
     }
 </style>
+
+
 @code {
     private List<Player> players = new List<Player>();
     private bool isLoading = true;
@@ -522,43 +650,41 @@
         }
     }
 
-    /// <summary>
-    /// Generates a MarkupString for a player statistic, including a trend arrow
-    /// based on a comparison between the overall stat and the last 5 games.
-    /// </summary>
-    /// <param name="overall">The overall statistic value.</param>
-    /// <param name="last5">The statistic value from the last 5 games.</param>
-    /// <param name="isHigherBetter">A boolean indicating if a higher value is better for this stat.</param>
-    /// <returns>A MarkupString containing the formatted stat and a trend indicator.</returns>
     private MarkupString GetStatWithArrow(double overall, double last5, bool isHigherBetter = true)
     {
-        // Using inline SVG for cleaner, scalable arrows.
-        const string svgStyle = "display: inline-block; vertical-align: -0.2em; margin-right: 4px;";
+        // Container for the icon to ensure alignment. It has a fixed width.
+        const string iconContainerStyle = "display: inline-block; width: 12px; text-align: center;";
 
-        // SVG for a green up arrow (chevron) at 50% opacity
+        // SVG styles
+        const string svgStyle = "display: inline-block; vertical-align: -0.2em;";
+
+        // Icons
         string upArrowSvg = $@"<svg width=""12"" height=""12"" viewBox=""0 0 16 16"" fill=""none"" stroke=""#22c55e80"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round"" style=""{svgStyle}""><path d=""M4 10l4-4 4 4""/></svg>";
-
-        // SVG for a red down arrow (chevron) at 50% opacity
         string downArrowSvg = $@"<svg width=""12"" height=""12"" viewBox=""0 0 16 16"" fill=""none"" stroke=""#ef444480"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round"" style=""{svgStyle}""><path d=""M4 6l4 4 4-4""/></svg>";
+        string dotSpan = $@"<span style=""color:gray; font-size: 1em; vertical-align: -0.15em;"">•</span>";
 
-        const string dotStyle = "color:gray; font-size: 1em; vertical-align: -0.15em; display: inline-block; margin-right: 4px;";
-
+        string iconHtml;
         string overallFormatted = overall.ToString("0.00");
 
         if (last5 == 0)
-            return new MarkupString(overallFormatted);
-
-        if ((isHigherBetter && last5 > overall) || (!isHigherBetter && last5 < overall))
         {
-            return new MarkupString($@"{upArrowSvg} {overallFormatted}");
+            iconHtml = ""; // No icon, the container will just be empty space
+        }
+        else if ((isHigherBetter && last5 > overall) || (!isHigherBetter && last5 < overall))
+        {
+            iconHtml = upArrowSvg;
         }
         else if ((isHigherBetter && last5 < overall) || (!isHigherBetter && last5 > overall))
         {
-            return new MarkupString($@"{downArrowSvg} {overallFormatted}");
+            iconHtml = downArrowSvg;
         }
         else
         {
-            return new MarkupString($@"<span style=""{dotStyle}"">•</span> {overallFormatted}");
+            iconHtml = dotSpan;
         }
+
+        // Construct the final markup with the icon container. This ensures the stat number that follows
+        // will always be aligned, whether an icon is present or not.
+        return new MarkupString($@"<span style=""{iconContainerStyle}"">{iconHtml}</span> {overallFormatted}");
     }
 }
