@@ -15,7 +15,7 @@
             { "pmr-grounds1", 19 },
             { "pmr-grounds", 19 },
             { "am-cricket-ground", 19 }, // 19 km
-            { "harsha-cricket-ground-aziznagar", 20 }, // 19.5 km
+            { "harsha-cricket-ground-aziznagar", 23 }, // 19.5 km
             { "abhiram-cricket-county-donthanpalli-shankarpally", 20 }, // 20 km
             { "gurukul-ground-moinabad", 20 }, // 20km
             { "msdian", 20},
