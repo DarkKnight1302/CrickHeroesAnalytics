@@ -37,7 +37,7 @@
             { "sr2-cricket-ground", 25 }, // 25 km
             { "s.a.r-cricket-arena", 25 }, // 25 km
             { "s.a.r-cricket-arena--ground---1", 25 }, // 25 km
-            { "ballebaaz-saudaan", 26},
+            { "ballebaaz-saudaan", 13},
             { "olympus-cricket-ground", 25 }, // 25 km
             { "warriors-ground", 27 },
             { "sukruth-cricket-ground", 30 }, // 27 km
