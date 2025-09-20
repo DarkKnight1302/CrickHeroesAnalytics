@@ -28,7 +28,6 @@ namespace CricHeroesAnalytics.Services
 
         public async Task<List<MatchData>> GetMatches()
         {
-            await UpdateBuildIdAsync();
             this.logger.LogInformation("Request to fetch matches");
             await semaphore.WaitAsync();
             try
@@ -74,7 +73,6 @@ namespace CricHeroesAnalytics.Services
             {
                 throw new InvalidDataException("Invalid Match data");
             }
-            await UpdateBuildIdAsync();
             string combinedTeamName = GenerateTeamName(matchData.TeamA, matchData.TeamB);
             long matchId = matchData.MatchId;
             using (HttpClient client = new HttpClient())

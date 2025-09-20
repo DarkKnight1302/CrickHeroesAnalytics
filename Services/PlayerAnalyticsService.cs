@@ -170,7 +170,10 @@ namespace CricHeroesAnalytics.Services
             {
                 fetchTasks.Add(Task.Run(async () =>
                 {
-                    p.PlayerProfilePic = await cricHeroesApiClient.GetProfilePictureUrlAsync(p.Id).ConfigureAwait(false);
+                    if (string.IsNullOrEmpty(p.PlayerProfilePic))
+                    {
+                        p.PlayerProfilePic = "https://media.cricheroes.in/default/user_profile.png";
+                    }
                 }));
             }
             await Task.WhenAll(fetchTasks);
