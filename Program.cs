@@ -24,6 +24,7 @@ builder.Services.AddSingleton<IGwGroundAnalyticsService, GwGroundAnalyticsServic
 builder.Services.AddSingleton<IGWSportsApiClient, GWSportsApiClient>();
 builder.Services.AddSingleton<IPlayerRatingService, PlayerRatingService>();
 builder.Services.AddSingleton<IPlayerStatService, PlayerStatService>();
+builder.Services.AddSingleton<ITeamAnalyticsService, TeamAnalyticsService>();
 builder.Services.AddHttpClient();
 builder.Services.AddQuartz(q =>
 {
