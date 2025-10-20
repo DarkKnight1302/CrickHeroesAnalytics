@@ -11,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// Add controllers to expose Web API endpoints (e.g., health check)
+builder.Services.AddControllers();
+
 builder.Services.AddSingleton<ICricHeroesApiClient, CricHeroesApiClient>();
 builder.Services.AddSingleton<IMatchAnalyticService, MatchAnalyticService>();
 builder.Services.AddSingleton<ICosmosDbService, CosmosDbService>();
@@ -58,5 +61,8 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+// Map attribute-routed controllers (e.g., /api/health)
+app.MapControllers();
 
 app.Run();
